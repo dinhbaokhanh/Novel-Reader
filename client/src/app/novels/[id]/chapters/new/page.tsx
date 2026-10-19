@@ -1,0 +1,168 @@
+'use client';
+
+import { useEffect, useState } from 'react';
+import { useParams, useRouter } from 'next/navigation';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { z } from 'zod';
+import { chaptersApi } from '@/lib/api/chapters';
+import ProtectedLayout from '@/components/layout/ProtectedLayout';
+import RichTextEditor from '@/components/content/RichTextEditor';
+import { ArrowLeft } from 'lucide-react';
+import Link from 'next/link';
+
+const schema = z.object({
+  chapterNumber: z.number().int().positive('Số chương phải lớn hơn 0'),
+  title:   z.string().max(500).optional(),
+  content: z.string().min(1, 'Nội dung không được để trống'),
+});
+
+type FormData = z.infer<typeof schema>;
+
+export default function NewChapterPage() {
+  const params  = useParams();
+  const router  = useRouter();
+  const novelId = params.id as string;
+
+  const [error,           setError]           = useState('');
+  const [isLoading,       setIsLoading]       = useState(false);
+  const [suggestedNumber, setSuggestedNumber] = useState(1);
+
+  const {
+    register,
+    handleSubmit,
+    setValue,
+    watch,
+    formState: { errors },
+  } = useForm<FormData>({
+    resolver: zodResolver(schema),
+    defaultValues: { chapterNumber: 1, content: '' },
+  });
+
+  const contentValue = watch('content', '');
+
+  // Auto-suggest next chapter number
+  useEffect(() => {
+    chaptersApi.findAll(novelId)
+      .then((chapters) => {
+        const next = chapters.length > 0
+          ? Math.max(...chapters.map((c) => c.chapterNumber)) + 1
+          : 1;
+        setSuggestedNumber(next);
+        setValue('chapterNumber', next);
+      })
+      .catch(() => { /* keep default 1 */ });
+  }, [novelId, setValue]);
+
+  const onSubmit = async (data: FormData) => {
+    try {
+      setIsLoading(true);
+      setError('');
+      await chaptersApi.create(novelId, data);
+      router.push(`/novels/${novelId}`);
+    } catch (err: any) {
+      setError(err.response?.data?.message || 'Không thể tạo chương');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  return (
+    <ProtectedLayout>
+      <div className="max-w-5xl mx-auto">
+
+        <div className="mb-6">
+          <Link
+            href={`/novels/${novelId}`}
+            className="inline-flex items-center text-sm text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300"
+          >
+            <ArrowLeft className="h-4 w-4 mr-2" />
+            Quay lại truyện
+          </Link>
+        </div>
+
+        <div className="bg-white dark:bg-gray-800 shadow rounded-lg p-6 space-y-6">
+          <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
+            Tạo chương mới
+          </h1>
+
+          {error && (
+            <div className="bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 p-4 rounded-lg text-sm">
+              {error}
+            </div>
+          )}
+
+          <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
+
+            {/* ── Số chương + Tiêu đề ─────────────────────────────────── */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                  Số chương <span className="text-red-500">*</span>
+                </label>
+                <input
+                  {...register('chapterNumber', { valueAsNumber: true })}
+                  type="number"
+                  min="1"
+                  className="block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg shadow-sm
+                             focus:outline-none focus:ring-primary-500 focus:border-primary-500
+                             dark:bg-gray-700 dark:text-white text-sm"
+                />
+                <p className="mt-1 text-xs text-gray-400">
+                  Gợi ý: Chương {suggestedNumber}
+                </p>
+                {errors.chapterNumber && (
+                  <p className="mt-1 text-sm text-red-600">{errors.chapterNumber.message}</p>
+                )}
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                  Tiêu đề{' '}
+                  <span className="font-normal text-gray-400">(tùy chọn)</span>
+                </label>
+                <input
+                  {...register('title')}
+                  type="text"
+                  placeholder="Để trống nếu chương không có tiêu đề"
+                  className="block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg shadow-sm
+                             focus:outline-none focus:ring-primary-500 focus:border-primary-500
+                             dark:bg-gray-700 dark:text-white text-sm"
+                />
+              </div>
+            </div>
+
+            {/* ── Content (rich text) ───────────────────────────────────── */}
+            <RichTextEditor
+              value={contentValue}
+              onChange={(md) => setValue('content', md, { shouldValidate: true })}
+              minHeight={520}
+              error={errors.content?.message}
+            />
+
+            {/* ── Actions ───────────────────────────────────────────────── */}
+            <div className="flex justify-end gap-3 pt-2 border-t border-gray-200 dark:border-gray-700">
+              <Link
+                href={`/novels/${novelId}`}
+                className="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-sm font-medium
+                           text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-700
+                           hover:bg-gray-50 dark:hover:bg-gray-600"
+              >
+                Hủy
+              </Link>
+              <button
+                type="submit"
+                disabled={isLoading}
+                className="px-4 py-2 rounded-lg text-sm font-medium text-white
+                           bg-primary-600 hover:bg-primary-700
+                           disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+              >
+                {isLoading ? 'Đang tạo...' : 'Tạo chương'}
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </ProtectedLayout>
+  );
+}

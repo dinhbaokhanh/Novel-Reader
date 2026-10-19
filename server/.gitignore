@@ -1,0 +1,30 @@
+# Dependencies
+node_modules/
+
+# Build output
+dist/
+
+# Environment variables (contains secrets)
+.env
+
+# Prisma generated client (reproducible via `npm run db:generate`)
+# Keep schema.prisma but ignore generated files
+# node_modules/@prisma/client is already in node_modules/
+
+# TypeScript incremental build cache
+*.tsbuildinfo
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo

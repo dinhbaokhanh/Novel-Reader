@@ -1,0 +1,328 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ─────────────────────────────────────────────
+// ENUMS
+// ─────────────────────────────────────────────
+
+enum NovelStatus {
+  draft
+  active
+  completed
+  archived
+}
+
+enum ChapterStatus {
+  generating
+  completed_locked
+  completed_editable
+  failed
+}
+
+enum ChapterSource {
+  manual
+  ai_generated
+}
+
+enum VersionSource {
+  manual_edit
+  ai_generated
+  restored
+}
+
+enum CharacterRole {
+  protagonist
+  antagonist
+  supporting
+  minor
+}
+
+enum CanonCategory {
+  world_rule
+  event
+  character_state
+  relationship
+  location
+  lore
+  other
+}
+
+enum CanonLinkType {
+  introduces
+  references
+  modifies
+  resolves
+}
+
+enum PlotThreadStatus {
+  open
+  resolved
+  abandoned
+}
+
+enum AiJobType {
+  generate_chapter
+  propose_canon
+  summarize_chapter
+}
+
+enum AiJobStatus {
+  pending
+  in_progress
+  completed
+  failed
+  cancelled
+}
+
+// ─────────────────────────────────────────────
+// MODELS
+// ─────────────────────────────────────────────
+
+model User {
+  id              String   @id @default(uuid())
+  email           String   @unique @db.VarChar(255)
+  passwordHash    String   @map("password_hash") @db.VarChar(255)
+  displayName     String   @map("display_name") @db.VarChar(100)
+  mcpTokenHash    String?  @map("mcp_token_hash") @db.VarChar(255)
+  createdAt       DateTime @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt       DateTime @updatedAt @map("updated_at") @db.Timestamptz
+
+  novels           Novel[]
+  bookmarks        Bookmark[]
+  readingProgresses ReadingProgress[]
+  aiJobs           AiJob[]
+  chapterVersions  ChapterVersion[]
+  auditLogs        AuditLog[]
+
+  @@map("users")
+}
+
+model Novel {
+  id            String      @id @default(uuid())
+  ownerId       String      @map("owner_id")
+  title         String      @db.VarChar(300)
+  description   String?     @db.Text
+  genre         String?     @db.VarChar(100)
+  language      String      @default("vi") @db.VarChar(20)
+  writingStyle  String?     @map("writing_style") @db.Text
+  status        NovelStatus @default(draft)
+  isPrivate     Boolean     @default(true) @map("is_private")
+  chapterCount  Int         @default(0) @map("chapter_count")
+  writingNotes  String?     @map("writing_notes") @db.Text
+  createdAt     DateTime    @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt     DateTime    @updatedAt @map("updated_at") @db.Timestamptz
+
+  owner           User              @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+  chapters        Chapter[]
+  characters      Character[]
+  canonFacts      CanonFact[]
+  plotThreads     PlotThread[]
+  bookmarks       Bookmark[]
+  readingProgresses ReadingProgress[]
+  aiJobs          AiJob[]
+
+  @@index([ownerId])
+  @@map("novels")
+}
+
+model Chapter {
+  id            String        @id @default(uuid())
+  novelId       String        @map("novel_id")
+  chapterNumber Int           @map("chapter_number")
+  title         String?       @db.VarChar(500)
+  content       String        @db.Text
+  wordCount     Int           @default(0) @map("word_count")
+  status        ChapterStatus @default(completed_locked)
+  source        ChapterSource @default(manual)
+  aiJobId       String?       @unique @map("ai_job_id")
+  isCanonDirty  Boolean       @default(false) @map("is_canon_dirty")
+  summary       String?       @db.Text
+  createdAt     DateTime      @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt     DateTime      @updatedAt @map("updated_at") @db.Timestamptz
+
+  novel           Novel              @relation(fields: [novelId], references: [id], onDelete: Cascade)
+  aiJob           AiJob?             @relation("JobGeneratedChapter", fields: [aiJobId], references: [id])
+  versions        ChapterVersion[]
+  canonLinks      ChapterCanonLink[]
+  bookmarks       Bookmark[]
+  readingProgresses ReadingProgress[]
+  canonFacts      CanonFact[]        @relation("SourceChapter")
+
+  @@unique([novelId, chapterNumber])
+  @@index([novelId, chapterNumber])
+  @@map("chapters")
+}
+
+model ChapterVersion {
+  id            String        @id @default(uuid())
+  chapterId     String        @map("chapter_id")
+  versionNumber Int           @map("version_number")
+  content       String        @db.Text
+  wordCount     Int           @map("word_count")
+  changeSummary String?       @map("change_summary") @db.VarChar(500)
+  createdById   String        @map("created_by")
+  source        VersionSource
+  createdAt     DateTime      @default(now()) @map("created_at") @db.Timestamptz
+
+  chapter   Chapter @relation(fields: [chapterId], references: [id], onDelete: Cascade)
+  createdBy User    @relation(fields: [createdById], references: [id])
+
+  @@unique([chapterId, versionNumber])
+  @@index([chapterId])
+  @@map("chapter_versions")
+}
+
+model Character {
+  id            String        @id @default(uuid())
+  novelId       String        @map("novel_id")
+  name          String        @db.VarChar(200)
+  aliases       String[]
+  role          CharacterRole @default(supporting)
+  description   String?       @db.Text
+  backstory     String?       @db.Text
+  currentStatus String?       @map("current_status") @db.VarChar(200)
+  metadata      Json?
+  isActive      Boolean       @default(true) @map("is_active")
+  createdAt     DateTime      @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt     DateTime      @updatedAt @map("updated_at") @db.Timestamptz
+
+  novel Novel @relation(fields: [novelId], references: [id], onDelete: Cascade)
+
+  @@index([novelId])
+  @@map("characters")
+}
+
+model CanonFact {
+  id              String        @id @default(uuid())
+  novelId         String        @map("novel_id")
+  category        CanonCategory
+  title           String        @db.VarChar(300)
+  content         String        @db.Text
+  isConfirmed     Boolean       @default(true) @map("is_confirmed")
+  isDirty         Boolean       @default(false) @map("is_dirty")
+  confirmedAt     DateTime?     @map("confirmed_at") @db.Timestamptz
+  sourceChapterId String?       @map("source_chapter_id")
+  createdAt       DateTime      @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt       DateTime      @updatedAt @map("updated_at") @db.Timestamptz
+
+  novel         Novel              @relation(fields: [novelId], references: [id], onDelete: Cascade)
+  sourceChapter Chapter?           @relation("SourceChapter", fields: [sourceChapterId], references: [id])
+  chapterLinks  ChapterCanonLink[]
+
+  @@index([novelId, isConfirmed, isDirty])
+  @@map("canon_facts")
+}
+
+model PlotThread {
+  id               String           @id @default(uuid())
+  novelId          String           @map("novel_id")
+  title            String           @db.VarChar(300)
+  description      String?          @db.Text
+  status           PlotThreadStatus @default(open)
+  openedAtChapter  Int?             @map("opened_at_chapter")
+  closedAtChapter  Int?             @map("closed_at_chapter")
+  priority         Int              @default(0)
+  createdAt        DateTime         @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt        DateTime         @updatedAt @map("updated_at") @db.Timestamptz
+
+  novel Novel @relation(fields: [novelId], references: [id], onDelete: Cascade)
+
+  @@index([novelId, status])
+  @@map("plot_threads")
+}
+
+model ChapterCanonLink {
+  id          String        @id @default(uuid())
+  chapterId   String        @map("chapter_id")
+  canonFactId String        @map("canon_fact_id")
+  linkType    CanonLinkType
+  createdAt   DateTime      @default(now()) @map("created_at") @db.Timestamptz
+
+  chapter   Chapter   @relation(fields: [chapterId], references: [id], onDelete: Cascade)
+  canonFact CanonFact @relation(fields: [canonFactId], references: [id], onDelete: Cascade)
+
+  @@unique([chapterId, canonFactId])
+  @@map("chapter_canon_links")
+}
+
+model Bookmark {
+  id             String   @id @default(uuid())
+  userId         String   @map("user_id")
+  novelId        String   @map("novel_id")
+  chapterId      String   @map("chapter_id")
+  scrollPosition Int?     @map("scroll_position")
+  note           String?  @db.VarChar(500)
+  createdAt      DateTime @default(now()) @map("created_at") @db.Timestamptz
+
+  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  novel   Novel   @relation(fields: [novelId], references: [id], onDelete: Cascade)
+  chapter Chapter @relation(fields: [chapterId], references: [id], onDelete: Cascade)
+
+  @@index([userId, novelId])
+  @@map("bookmarks")
+}
+
+model ReadingProgress {
+  id                 String   @id @default(uuid())
+  userId             String   @map("user_id")
+  novelId            String   @map("novel_id")
+  lastChapterId      String   @map("last_chapter_id")
+  lastScrollPosition Int?     @map("last_scroll_position")
+  updatedAt          DateTime @updatedAt @map("updated_at") @db.Timestamptz
+
+  user        User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  novel       Novel   @relation(fields: [novelId], references: [id], onDelete: Cascade)
+  lastChapter Chapter @relation(fields: [lastChapterId], references: [id])
+
+  @@unique([userId, novelId])
+  @@index([userId])
+  @@map("reading_progress")
+}
+
+model AiJob {
+  id                  String      @id @default(uuid())
+  novelId             String      @map("novel_id")
+  userId              String      @map("user_id")
+  jobType             AiJobType   @map("job_type")
+  status              AiJobStatus @default(pending)
+  inputContext        Json?       @map("input_context")
+  resultChapterId     String?     @map("result_chapter_id")
+  resultCanonProposal Json?       @map("result_canon_proposal")
+  errorMessage        String?     @map("error_message") @db.Text
+  startedAt           DateTime?   @map("started_at") @db.Timestamptz
+  completedAt         DateTime?   @map("completed_at") @db.Timestamptz
+  createdAt           DateTime    @default(now()) @map("created_at") @db.Timestamptz
+
+  novel            Novel     @relation(fields: [novelId], references: [id], onDelete: Cascade)
+  user             User      @relation(fields: [userId], references: [id])
+  generatedChapter Chapter?  @relation("JobGeneratedChapter")
+
+  @@index([novelId, status])
+  @@map("ai_jobs")
+}
+
+model AuditLog {
+  id         String   @id @default(uuid())
+  userId     String?  @map("user_id")
+  action     String   @db.VarChar(100)
+  entityType String   @map("entity_type") @db.VarChar(50)
+  entityId   String   @map("entity_id")
+  payload    Json?
+  ipAddress  String?  @map("ip_address") @db.VarChar(45)
+  createdAt  DateTime @default(now()) @map("created_at") @db.Timestamptz
+
+  user User? @relation(fields: [userId], references: [id], onDelete: SetNull)
+
+  @@index([entityType, entityId])
+  @@index([userId])
+  @@map("audit_logs")
+}
