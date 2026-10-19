@@ -212,7 +212,6 @@ export default function NovelDetailPage() {
                     { value: 'all',                label: 'Tất cả' },
                     { value: 'completed_locked',   label: 'Đã khóa' },
                     { value: 'completed_editable', label: 'Chỉnh sửa được' },
-                    { value: 'generating',         label: 'Đang tạo' },
                   ] as { value: StatusFilter; label: string }[]
                 ).map((f) => (
                   <button

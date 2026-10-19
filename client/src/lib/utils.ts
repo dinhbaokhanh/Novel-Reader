@@ -29,6 +29,7 @@ export function formatNumber(num: number): string {
 
 export function getChapterStatusText(status: string): string {
   const statusMap: Record<string, string> = {
+    generating: 'Đang tạo',
     completed_locked: 'Hoàn thành (Khóa)',
     completed_editable: 'Hoàn thành (Chỉnh sửa được)',
     failed: 'Thất bại',
