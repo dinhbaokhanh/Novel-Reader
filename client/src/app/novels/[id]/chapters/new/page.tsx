@@ -8,7 +8,7 @@ import { z } from 'zod';
 import { chaptersApi } from '@/lib/api/chapters';
 import ProtectedLayout from '@/components/layout/ProtectedLayout';
 import RichTextEditor from '@/components/content/RichTextEditor';
-import { ArrowLeft } from 'lucide-react';
+import { ArrowLeft, Plus, X } from 'lucide-react';
 import Link from 'next/link';
 
 const schema = z.object({
@@ -69,100 +69,136 @@ export default function NewChapterPage() {
 
   return (
     <ProtectedLayout>
-      <div className="max-w-5xl mx-auto">
 
-        <div className="mb-6">
-          <Link
-            href={`/novels/${novelId}`}
-            className="inline-flex items-center text-sm text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300"
-          >
-            <ArrowLeft className="h-4 w-4 mr-2" />
-            Quay lại truyện
-          </Link>
-        </div>
+      {/* ── Sticky action bar ────────────────────────────────────────────── */}
+      <div className="sticky top-16 z-30 -mx-4 sm:-mx-6 lg:-mx-8 px-4 sm:px-6 lg:px-8
+                      bg-white/95 dark:bg-gray-800/95 backdrop-blur-sm
+                      border-b border-gray-200 dark:border-gray-700 shadow-sm">
+        <div className="max-w-5xl mx-auto flex items-center justify-between h-14 gap-3">
 
-        <div className="bg-white dark:bg-gray-800 shadow rounded-lg p-6 space-y-6">
-          <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
-            Tạo chương mới
-          </h1>
+          {/* Left: back + label */}
+          <div className="flex items-center gap-3 min-w-0">
+            <Link
+              href={`/novels/${novelId}`}
+              className="p-1.5 rounded-lg text-gray-500 hover:text-gray-800
+                         hover:bg-gray-100 dark:hover:bg-gray-700 dark:text-gray-400
+                         dark:hover:text-gray-200 transition-colors shrink-0"
+              title="Quay lại truyện"
+            >
+              <ArrowLeft className="h-4 w-4" />
+            </Link>
+            <span className="text-sm font-medium text-gray-700 dark:text-gray-300 truncate">
+              Tạo chương mới
+            </span>
+          </div>
 
-          {error && (
-            <div className="bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 p-4 rounded-lg text-sm">
-              {error}
-            </div>
-          )}
+          {/* Right: cancel + create */}
+          <div className="flex items-center gap-2 shrink-0">
+            <Link
+              href={`/novels/${novelId}`}
+              className="hidden sm:inline-flex items-center px-3 py-1.5 rounded-lg text-sm font-medium
+                         border border-gray-300 dark:border-gray-600
+                         text-gray-700 dark:text-gray-300
+                         bg-white dark:bg-gray-700
+                         hover:bg-gray-50 dark:hover:bg-gray-600 transition-colors"
+            >
+              <X className="h-3.5 w-3.5 mr-1.5" />
+              Hủy
+            </Link>
 
-          <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
-
-            {/* ── Số chương + Tiêu đề ─────────────────────────────────── */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                  Số chương <span className="text-red-500">*</span>
-                </label>
-                <input
-                  {...register('chapterNumber', { valueAsNumber: true })}
-                  type="number"
-                  min="1"
-                  className="block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg shadow-sm
-                             focus:outline-none focus:ring-primary-500 focus:border-primary-500
-                             dark:bg-gray-700 dark:text-white text-sm"
-                />
-                <p className="mt-1 text-xs text-gray-400">
-                  Gợi ý: Chương {suggestedNumber}
-                </p>
-                {errors.chapterNumber && (
-                  <p className="mt-1 text-sm text-red-600">{errors.chapterNumber.message}</p>
-                )}
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                  Tiêu đề{' '}
-                  <span className="font-normal text-gray-400">(tùy chọn)</span>
-                </label>
-                <input
-                  {...register('title')}
-                  type="text"
-                  placeholder="Để trống nếu chương không có tiêu đề"
-                  className="block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg shadow-sm
-                             focus:outline-none focus:ring-primary-500 focus:border-primary-500
-                             dark:bg-gray-700 dark:text-white text-sm"
-                />
-              </div>
-            </div>
-
-            {/* ── Content (rich text) ───────────────────────────────────── */}
-            <RichTextEditor
-              value={contentValue}
-              onChange={(md) => setValue('content', md, { shouldValidate: true })}
-              minHeight={520}
-              error={errors.content?.message}
-            />
-
-            {/* ── Actions ───────────────────────────────────────────────── */}
-            <div className="flex justify-end gap-3 pt-2 border-t border-gray-200 dark:border-gray-700">
-              <Link
-                href={`/novels/${novelId}`}
-                className="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-sm font-medium
-                           text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-700
-                           hover:bg-gray-50 dark:hover:bg-gray-600"
-              >
-                Hủy
-              </Link>
-              <button
-                type="submit"
-                disabled={isLoading}
-                className="px-4 py-2 rounded-lg text-sm font-medium text-white
-                           bg-primary-600 hover:bg-primary-700
-                           disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-              >
-                {isLoading ? 'Đang tạo...' : 'Tạo chương'}
-              </button>
-            </div>
-          </form>
+            <button
+              type="button"
+              onClick={handleSubmit(onSubmit)}
+              disabled={isLoading}
+              className="inline-flex items-center px-4 py-1.5 rounded-lg text-sm font-medium text-white
+                         bg-primary-600 hover:bg-primary-700 active:bg-primary-800
+                         disabled:opacity-50 disabled:cursor-not-allowed
+                         shadow-sm transition-colors"
+            >
+              <Plus className="h-3.5 w-3.5 mr-1.5" />
+              {isLoading ? 'Đang tạo…' : 'Tạo chương'}
+            </button>
+          </div>
         </div>
       </div>
+
+      {/* ── Page body ──────────────────────────────────────────────────────── */}
+      <div className="max-w-5xl mx-auto pt-6 pb-16">
+
+        {error && (
+          <div className="mb-4 bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400
+                          p-4 rounded-lg text-sm">
+            {error}
+          </div>
+        )}
+
+        <div className="bg-white dark:bg-gray-800 shadow rounded-lg p-6 space-y-5">
+
+          {/* ── Số chương + Tiêu đề ───────────────────────────────────── */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                Số chương <span className="text-red-500">*</span>
+              </label>
+              <input
+                {...register('chapterNumber', { valueAsNumber: true })}
+                type="number"
+                min="1"
+                className="block w-full px-3 py-2 border border-gray-300 dark:border-gray-600
+                           rounded-lg shadow-sm focus:outline-none
+                           focus:ring-primary-500 focus:border-primary-500
+                           dark:bg-gray-700 dark:text-white text-sm"
+              />
+              <p className="mt-1 text-xs text-gray-400">
+                Gợi ý: Chương {suggestedNumber}
+              </p>
+              {errors.chapterNumber && (
+                <p className="mt-1 text-sm text-red-600">{errors.chapterNumber.message}</p>
+              )}
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                Tiêu đề{' '}
+                <span className="font-normal text-gray-400">(tùy chọn)</span>
+              </label>
+              <input
+                {...register('title')}
+                type="text"
+                placeholder="Để trống nếu chương không có tiêu đề"
+                className="block w-full px-3 py-2 border border-gray-300 dark:border-gray-600
+                           rounded-lg shadow-sm focus:outline-none
+                           focus:ring-primary-500 focus:border-primary-500
+                           dark:bg-gray-700 dark:text-white text-sm"
+              />
+            </div>
+          </div>
+
+          {/* ── Content (rich text) ─────────────────────────────────────── */}
+          <RichTextEditor
+            value={contentValue}
+            onChange={(md) => setValue('content', md, { shouldValidate: true })}
+            minHeight={520}
+            error={errors.content?.message}
+          />
+
+          {/* ── Bottom create (secondary) ────────────────────────────────── */}
+          <div className="flex justify-end gap-3 pt-2 border-t border-gray-200 dark:border-gray-700">
+            <button
+              type="button"
+              onClick={handleSubmit(onSubmit)}
+              disabled={isLoading}
+              className="inline-flex items-center px-4 py-2 rounded-lg text-sm font-medium text-white
+                         bg-primary-600 hover:bg-primary-700
+                         disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+            >
+              <Plus className="h-4 w-4 mr-2" />
+              {isLoading ? 'Đang tạo…' : 'Tạo chương'}
+            </button>
+          </div>
+        </div>
+      </div>
+
     </ProtectedLayout>
   );
 }
