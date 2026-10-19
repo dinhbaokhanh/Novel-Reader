@@ -29,10 +29,23 @@ export default function NovelDetailPage() {
   const [error,     setError]     = useState('');
 
   // ── Filter / search state ─────────────────────────────────────────────
-  const [query,         setQuery]         = useState('');
-  const [statusFilter,  setStatusFilter]  = useState<StatusFilter>('all');
-  const [sortDir,       setSortDir]       = useState<SortDir>('asc');
-  const [page,          setPage]          = useState(1);
+  const [query,        setQuery]        = useState('');
+  const [statusFilter, setStatusFilter] = useState<StatusFilter>('all');
+  const [sortDir,      setSortDir]      = useState<SortDir>(() => {
+    if (typeof window === 'undefined') return 'asc';
+    const saved = localStorage.getItem('chapterSortDir');
+    return saved === 'desc' ? 'desc' : 'asc';
+  });
+  const [page, setPage] = useState(1);
+
+  // Persist sort preference
+  const handleSortToggle = () => {
+    setSortDir((d) => {
+      const next: SortDir = d === 'asc' ? 'desc' : 'asc';
+      localStorage.setItem('chapterSortDir', next);
+      return next;
+    });
+  };
 
   useEffect(() => {
     if (!novelId) return;
@@ -193,7 +206,7 @@ export default function NovelDetailPage() {
               <div className="flex gap-1.5 flex-wrap items-center">
                 {/* Sort direction toggle */}
                 <button
-                  onClick={() => setSortDir((d) => d === 'asc' ? 'desc' : 'asc')}
+                  onClick={handleSortToggle}
                   title={sortDir === 'asc' ? 'Đang: Cũ → Mới' : 'Đang: Mới → Cũ'}
                   className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg
                              text-xs font-medium border transition-colors
