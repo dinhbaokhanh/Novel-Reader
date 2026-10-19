@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { novelsApi } from '@/lib/api/novels';
@@ -8,61 +8,65 @@ import { chaptersApi } from '@/lib/api/chapters';
 import { Novel, Chapter } from '@/lib/types';
 import ProtectedLayout from '@/components/layout/ProtectedLayout';
 import {
-  ArrowLeft,
-  Edit,
-  Plus,
-  FileText,
-  Lock,
-  Unlock,
-  Upload,
-  BookOpen,
-  Clock,
-  BookMarked,
+  ArrowLeft, Edit, Plus, FileText, Lock, Unlock,
+  Upload, BookOpen, Clock, BookMarked, Search, X,
 } from 'lucide-react';
 import { formatDate, formatDateTime, getChapterStatusText, formatNumber } from '@/lib/utils';
 
+type StatusFilter = 'all' | 'completed_locked' | 'completed_editable' | 'generating';
+
+const PAGE_SIZE = 50;
+
 export default function NovelDetailPage() {
-  const params = useParams();
-  const router = useRouter();
+  const params  = useParams();
   const novelId = params.id as string;
 
-  const [novel, setNovel] = useState<Novel | null>(null);
-  const [chapters, setChapters] = useState<Chapter[]>([]);
+  const [novel,     setNovel]     = useState<Novel | null>(null);
+  const [chapters,  setChapters]  = useState<Chapter[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState('');
+  const [error,     setError]     = useState('');
+
+  // ── Filter / search state ─────────────────────────────────────────────
+  const [query,         setQuery]         = useState('');
+  const [statusFilter,  setStatusFilter]  = useState<StatusFilter>('all');
+  const [page,          setPage]          = useState(1);
 
   useEffect(() => {
-    if (novelId) {
-      loadNovelAndChapters();
-    }
+    if (!novelId) return;
+    setIsLoading(true);
+    Promise.all([novelsApi.findOne(novelId), chaptersApi.findAll(novelId)])
+      .then(([n, c]) => { setNovel(n); setChapters(c); })
+      .catch((err: any) => setError(err.response?.data?.message || 'Không thể tải thông tin truyện'))
+      .finally(() => setIsLoading(false));
   }, [novelId]);
 
-  const loadNovelAndChapters = async () => {
-    try {
-      setIsLoading(true);
-      const [novelData, chaptersData] = await Promise.all([
-        novelsApi.findOne(novelId),
-        chaptersApi.findAll(novelId),
-      ]);
-      setNovel(novelData);
-      setChapters(chaptersData);
-    } catch (err: any) {
-      setError(err.response?.data?.message || 'Không thể tải thông tin truyện');
-    } finally {
-      setIsLoading(false);
-    }
-  };
+  // Reset page khi filter thay đổi
+  useEffect(() => { setPage(1); }, [query, statusFilter]);
+
+  // ── Derived list ──────────────────────────────────────────────────────
+  const filtered = useMemo(() => {
+    const q = query.trim().toLowerCase();
+    return chapters.filter((c) => {
+      const matchStatus = statusFilter === 'all' || c.status === statusFilter;
+      const matchQuery  = !q
+        || String(c.chapterNumber).includes(q)
+        || (c.title?.toLowerCase().includes(q) ?? false);
+      return matchStatus && matchQuery;
+    });
+  }, [chapters, query, statusFilter]);
+
+  const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
+  const paginated  = filtered.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
 
   if (isLoading) {
     return (
       <ProtectedLayout>
         <div className="flex justify-center items-center py-12">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600"></div>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600" />
         </div>
       </ProtectedLayout>
     );
   }
-
   if (error || !novel) {
     return (
       <ProtectedLayout>
@@ -76,89 +80,134 @@ export default function NovelDetailPage() {
   return (
     <ProtectedLayout>
       <div className="space-y-6">
-        <div className="mb-6">
-          <Link
-            href="/novels"
-            className="inline-flex items-center text-sm text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300"
-          >
-            <ArrowLeft className="h-4 w-4 mr-2" />
-            Quay lại danh sách
-          </Link>
-        </div>
 
-        {/* Novel Header */}
+        {/* Back */}
+        <Link href="/novels"
+          className="inline-flex items-center text-sm text-gray-500 hover:text-gray-700
+                     dark:text-gray-400 dark:hover:text-gray-300">
+          <ArrowLeft className="h-4 w-4 mr-2" />Quay lại danh sách
+        </Link>
+
+        {/* Novel header */}
         <div className="bg-white dark:bg-gray-800 shadow rounded-lg p-6">
-          <div className="flex justify-between items-start">
-            <div className="flex-1">
-              <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
-                {novel.title}
-              </h1>
+          <div className="flex justify-between items-start gap-4">
+            <div className="flex-1 min-w-0">
+              <h1 className="text-3xl font-bold text-gray-900 dark:text-white">{novel.title}</h1>
               {novel.description && (
-                <p className="mt-2 text-gray-600 dark:text-gray-400">
-                  {novel.description}
-                </p>
+                <p className="mt-2 text-gray-600 dark:text-gray-400">{novel.description}</p>
               )}
               <div className="mt-4 flex flex-wrap gap-4 text-sm text-gray-500 dark:text-gray-400">
                 {novel.genre && (
-                  <div className="flex items-center">
-                    <BookOpen className="h-4 w-4 mr-1" />
-                    {novel.genre}
-                  </div>
+                  <span className="flex items-center"><BookOpen className="h-4 w-4 mr-1" />{novel.genre}</span>
                 )}
-                <div className="flex items-center">
-                  <FileText className="h-4 w-4 mr-1" />
-                  {formatNumber(novel.chapterCount)} chương
-                </div>
-                <div className="flex items-center">
-                  <Clock className="h-4 w-4 mr-1" />
-                  {formatDate(novel.updatedAt)}
-                </div>
+                <span className="flex items-center">
+                  <FileText className="h-4 w-4 mr-1" />{formatNumber(novel.chapterCount)} chương
+                </span>
+                <span className="flex items-center">
+                  <Clock className="h-4 w-4 mr-1" />{formatDate(novel.updatedAt)}
+                </span>
               </div>
             </div>
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2 shrink-0">
               {chapters.length > 0 && (
-                <Link
-                  href={`/read/${novelId}/${chapters[0].id}`}
-                  className="inline-flex items-center px-4 py-2 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-primary-600 hover:bg-primary-700"
-                >
-                  <BookMarked className="h-4 w-4 mr-2" />
-                  Đọc ngay
+                <Link href={`/read/${novelId}/${chapters[0].id}`}
+                  className="inline-flex items-center px-4 py-2 border border-transparent
+                             rounded-lg shadow-sm text-sm font-medium text-white
+                             bg-primary-600 hover:bg-primary-700">
+                  <BookMarked className="h-4 w-4 mr-2" />Đọc ngay
                 </Link>
               )}
-              <Link
-                href={`/novels/${novelId}/edit`}
-                className="inline-flex items-center px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg shadow-sm text-sm font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600"
-              >
-                <Edit className="h-4 w-4 mr-2" />
-                Chỉnh sửa
+              <Link href={`/novels/${novelId}/edit`}
+                className="inline-flex items-center px-4 py-2 border border-gray-300
+                           dark:border-gray-600 rounded-lg shadow-sm text-sm font-medium
+                           text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-700
+                           hover:bg-gray-50 dark:hover:bg-gray-600">
+                <Edit className="h-4 w-4 mr-2" />Chỉnh sửa
               </Link>
             </div>
           </div>
         </div>
 
-        {/* Chapters Section */}
+        {/* Chapters section */}
         <div className="bg-white dark:bg-gray-800 shadow rounded-lg p-6">
-          <div className="flex justify-between items-center mb-6">
+
+          {/* Section header */}
+          <div className="flex flex-wrap justify-between items-center gap-3 mb-4">
             <h2 className="text-xl font-semibold text-gray-900 dark:text-white">
               Danh sách chương
+              <span className="ml-2 text-sm font-normal text-gray-400">
+                ({filtered.length}/{chapters.length})
+              </span>
             </h2>
-            <div className="flex space-x-3">
-              <Link
-                href={`/novels/${novelId}/chapters/import`}
-                className="inline-flex items-center px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg shadow-sm text-sm font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600"
-              >
-                <Upload className="h-4 w-4 mr-2" />
-                Import từ file
+            <div className="flex gap-2 shrink-0">
+              <Link href={`/novels/${novelId}/chapters/import`}
+                className="inline-flex items-center px-3 py-2 border border-gray-300
+                           dark:border-gray-600 rounded-lg text-sm font-medium
+                           text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-700
+                           hover:bg-gray-50 dark:hover:bg-gray-600">
+                <Upload className="h-4 w-4 mr-1.5" />Import
               </Link>
-              <Link
-                href={`/novels/${novelId}/chapters/new`}
-                className="inline-flex items-center px-4 py-2 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-primary-600 hover:bg-primary-700"
-              >
-                <Plus className="h-4 w-4 mr-2" />
-                Tạo chương mới
+              <Link href={`/novels/${novelId}/chapters/new`}
+                className="inline-flex items-center px-3 py-2 border border-transparent
+                           rounded-lg text-sm font-medium text-white
+                           bg-primary-600 hover:bg-primary-700">
+                <Plus className="h-4 w-4 mr-1.5" />Tạo chương
               </Link>
-            </div>          </div>
+            </div>
+          </div>
 
+          {/* Search + filter bar */}
+          {chapters.length > 0 && (
+            <div className="flex flex-col sm:flex-row gap-2 mb-4">
+              {/* Search input */}
+              <div className="relative flex-1">
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2
+                                   h-4 w-4 text-gray-400 pointer-events-none" />
+                <input
+                  type="text"
+                  value={query}
+                  onChange={(e) => setQuery(e.target.value)}
+                  placeholder="Tìm theo số chương hoặc tiêu đề…"
+                  className="w-full pl-9 pr-8 py-2 text-sm border border-gray-300
+                             dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700
+                             text-gray-900 dark:text-white placeholder-gray-400
+                             focus:outline-none focus:ring-2 focus:ring-primary-500"
+                />
+                {query && (
+                  <button onClick={() => setQuery('')}
+                    className="absolute right-2.5 top-1/2 -translate-y-1/2
+                               text-gray-400 hover:text-gray-600 dark:hover:text-gray-300">
+                    <X className="h-3.5 w-3.5" />
+                  </button>
+                )}
+              </div>
+
+              {/* Status filter pills */}
+              <div className="flex gap-1.5 flex-wrap">
+                {(
+                  [
+                    { value: 'all',                label: 'Tất cả' },
+                    { value: 'completed_locked',   label: 'Đã khóa' },
+                    { value: 'completed_editable', label: 'Chỉnh sửa được' },
+                    { value: 'generating',         label: 'Đang tạo' },
+                  ] as { value: StatusFilter; label: string }[]
+                ).map((f) => (
+                  <button
+                    key={f.value}
+                    onClick={() => setStatusFilter(f.value)}
+                    className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-colors
+                      ${statusFilter === f.value
+                        ? 'bg-primary-600 text-white'
+                        : 'bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'}`}
+                  >
+                    {f.label}
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Chapter list */}
           {chapters.length === 0 ? (
             <div className="text-center py-12">
               <FileText className="mx-auto h-12 w-12 text-gray-400" />
@@ -169,52 +218,110 @@ export default function NovelDetailPage() {
                 Bắt đầu bằng cách tạo chương đầu tiên hoặc import từ file
               </p>
             </div>
+          ) : filtered.length === 0 ? (
+            <div className="text-center py-10 text-sm text-gray-500 dark:text-gray-400">
+              Không tìm thấy chương nào phù hợp
+            </div>
           ) : (
-            <div className="space-y-2">
-              {chapters.map((chapter) => (
-                <div
-                  key={chapter.id}
-                  className="flex items-center p-4 border border-gray-200 dark:border-gray-700 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
-                >
-                  <Link
-                    href={`/novels/${novelId}/chapters/${chapter.id}`}
-                    className="flex-1 min-w-0"
-                  >
-                    <div className="flex items-center space-x-3">
-                      <span className="text-sm font-medium text-gray-500 dark:text-gray-400">
-                        Chương {chapter.chapterNumber}
-                      </span>
-                      {chapter.title && (
-                        <span className="text-base font-medium text-gray-900 dark:text-white truncate">
-                          {chapter.title}
+            <>
+              <div className="space-y-1.5">
+                {paginated.map((chapter) => (
+                  <div key={chapter.id}
+                    className="flex items-center px-4 py-3 border border-gray-200
+                               dark:border-gray-700 rounded-lg
+                               hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors">
+                    <Link href={`/novels/${novelId}/chapters/${chapter.id}`}
+                      className="flex-1 min-w-0">
+                      <div className="flex items-center gap-2">
+                        <span className="text-xs text-gray-400 dark:text-gray-500 shrink-0 w-16">
+                          Ch.{chapter.chapterNumber}
                         </span>
-                      )}
-                    </div>
-                    <div className="mt-1 flex items-center space-x-4 text-sm text-gray-500 dark:text-gray-400">
-                      <span>{formatNumber(chapter.wordCount)} từ</span>
-                      <span>•</span>
-                      <span>{getChapterStatusText(chapter.status)}</span>
-                      <span>•</span>
-                      <span>{formatDateTime(chapter.updatedAt)}</span>
-                    </div>
-                  </Link>
-                  <div className="flex items-center gap-2 ml-3 shrink-0">
-                    <Link
-                      href={`/read/${novelId}/${chapter.id}`}
-                      className="inline-flex items-center px-3 py-1.5 rounded-lg text-xs font-medium text-primary-600 bg-primary-50 hover:bg-primary-100 dark:text-primary-400 dark:bg-primary-900/30 dark:hover:bg-primary-900/50 transition-colors"
-                    >
-                      <BookOpen className="h-3.5 w-3.5 mr-1" />
-                      Đọc
+                        <span className="text-sm font-medium text-gray-900 dark:text-white truncate">
+                          {chapter.title || `Chương ${chapter.chapterNumber}`}
+                        </span>
+                      </div>
+                      <div className="mt-0.5 ml-[4.5rem] flex items-center gap-3 text-xs
+                                      text-gray-500 dark:text-gray-400">
+                        <span>{formatNumber(chapter.wordCount)} từ</span>
+                        <span>{getChapterStatusText(chapter.status)}</span>
+                        <span className="hidden sm:inline">{formatDateTime(chapter.updatedAt)}</span>
+                      </div>
                     </Link>
-                    {chapter.status === 'completed_locked'
-                      ? <Lock className="h-4 w-4 text-gray-400" />
-                      : chapter.status === 'completed_editable'
-                        ? <Unlock className="h-4 w-4 text-gray-400" />
-                        : null}
+
+                    <div className="flex items-center gap-2 ml-3 shrink-0">
+                      <Link href={`/read/${novelId}/${chapter.id}`}
+                        className="inline-flex items-center px-2.5 py-1.5 rounded-lg text-xs
+                                   font-medium text-primary-600 bg-primary-50
+                                   hover:bg-primary-100 dark:text-primary-400
+                                   dark:bg-primary-900/30 dark:hover:bg-primary-900/50">
+                        <BookOpen className="h-3.5 w-3.5 mr-1" />Đọc
+                      </Link>
+                      {chapter.status === 'completed_locked'
+                        ? <Lock className="h-4 w-4 text-gray-400" />
+                        : chapter.status === 'completed_editable'
+                          ? <Unlock className="h-4 w-4 text-gray-400" />
+                          : null}
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              {/* Pagination */}
+              {totalPages > 1 && (
+                <div className="flex items-center justify-between mt-4 pt-4
+                                border-t border-gray-200 dark:border-gray-700">
+                  <span className="text-xs text-gray-500 dark:text-gray-400">
+                    Trang {page}/{totalPages} · {filtered.length} chương
+                  </span>
+                  <div className="flex gap-1.5">
+                    <button
+                      onClick={() => setPage((p) => Math.max(1, p - 1))}
+                      disabled={page === 1}
+                      className="px-3 py-1.5 text-xs rounded-lg border border-gray-300
+                                 dark:border-gray-600 disabled:opacity-40
+                                 hover:bg-gray-50 dark:hover:bg-gray-700
+                                 text-gray-700 dark:text-gray-300">
+                      ← Trước
+                    </button>
+
+                    {/* Page number buttons — show max 5 around current */}
+                    {Array.from({ length: totalPages }, (_, i) => i + 1)
+                      .filter((p) => p === 1 || p === totalPages
+                        || Math.abs(p - page) <= 2)
+                      .reduce<(number | '…')[]>((acc, p, i, arr) => {
+                        if (i > 0 && p - (arr[i - 1] as number) > 1) acc.push('…');
+                        acc.push(p);
+                        return acc;
+                      }, [])
+                      .map((item, i) =>
+                        item === '…' ? (
+                          <span key={`ellipsis-${i}`}
+                            className="px-2 py-1.5 text-xs text-gray-400">…</span>
+                        ) : (
+                          <button key={item}
+                            onClick={() => setPage(item as number)}
+                            className={`px-3 py-1.5 text-xs rounded-lg border transition-colors
+                              ${page === item
+                                ? 'bg-primary-600 border-primary-600 text-white'
+                                : 'border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700'}`}>
+                            {item}
+                          </button>
+                        )
+                      )}
+
+                    <button
+                      onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
+                      disabled={page === totalPages}
+                      className="px-3 py-1.5 text-xs rounded-lg border border-gray-300
+                                 dark:border-gray-600 disabled:opacity-40
+                                 hover:bg-gray-50 dark:hover:bg-gray-700
+                                 text-gray-700 dark:text-gray-300">
+                      Sau →
+                    </button>
                   </div>
                 </div>
-              ))}
-            </div>
+              )}
+            </>
           )}
         </div>
       </div>
