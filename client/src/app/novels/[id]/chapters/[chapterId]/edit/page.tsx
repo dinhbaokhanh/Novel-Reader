@@ -121,15 +121,13 @@ export default function EditChapterPage() {
   if (!chapter) return null;
 
   return (
-    <ProtectedLayout>
-      {/*
-       * Sticky action bar — fixed below the Navbar (Navbar height ≈ 64px = h-16).
-       * Uses z-30 so it sits above the page content but below modals (z-50).
-       */}
-      <div className="sticky top-16 z-30 -mx-4 sm:-mx-6 lg:-mx-8 px-4 sm:px-6 lg:px-8
+    <ProtectedLayout noPadding>
+      {/* ── Sticky action bar ── dính ngay khi chạm top ─────────────────── */}
+      <div className="sticky top-0 z-30
                       bg-white/95 dark:bg-gray-800/95 backdrop-blur-sm
                       border-b border-gray-200 dark:border-gray-700 shadow-sm">
-        <div className="max-w-5xl mx-auto flex items-center justify-between h-14 gap-3">
+        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8
+                        flex items-center justify-between h-14 gap-3">
 
           {/* Left: back + chapter label */}
           <div className="flex items-center gap-3 min-w-0">
@@ -196,7 +194,7 @@ export default function EditChapterPage() {
       </div>
 
       {/* ── Page body ──────────────────────────────────────────────────────── */}
-      <div className="max-w-5xl mx-auto pt-6 pb-16">
+      <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 pt-6 pb-16">
 
         {error && (
           <div className="mb-4 bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400

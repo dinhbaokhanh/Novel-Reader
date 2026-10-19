@@ -8,8 +8,10 @@ import Navbar from './Navbar';
 
 export default function ProtectedLayout({
   children,
+  noPadding = false,
 }: {
   children: React.ReactNode;
+  noPadding?: boolean;
 }) {
   const router   = useRouter();
   const pathname = usePathname();
@@ -58,11 +60,15 @@ export default function ProtectedLayout({
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
       <Navbar />
-      <main className="py-10">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          {children}
-        </div>
-      </main>
+      {noPadding ? (
+        <>{children}</>
+      ) : (
+        <main className="py-10">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            {children}
+          </div>
+        </main>
+      )}
     </div>
   );
 }

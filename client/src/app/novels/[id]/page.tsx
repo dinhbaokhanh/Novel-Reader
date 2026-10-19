@@ -10,10 +10,12 @@ import ProtectedLayout from '@/components/layout/ProtectedLayout';
 import {
   ArrowLeft, Edit, Plus, FileText, Lock, Unlock,
   Upload, BookOpen, Clock, BookMarked, Search, X,
+  ArrowUpDown,
 } from 'lucide-react';
 import { formatDate, formatDateTime, getChapterStatusText, formatNumber } from '@/lib/utils';
 
 type StatusFilter = 'all' | 'completed_locked' | 'completed_editable' | 'generating';
+type SortDir = 'asc' | 'desc';
 
 const PAGE_SIZE = 50;
 
@@ -29,6 +31,7 @@ export default function NovelDetailPage() {
   // ── Filter / search state ─────────────────────────────────────────────
   const [query,         setQuery]         = useState('');
   const [statusFilter,  setStatusFilter]  = useState<StatusFilter>('all');
+  const [sortDir,       setSortDir]       = useState<SortDir>('asc');
   const [page,          setPage]          = useState(1);
 
   useEffect(() => {
@@ -40,20 +43,24 @@ export default function NovelDetailPage() {
       .finally(() => setIsLoading(false));
   }, [novelId]);
 
-  // Reset page khi filter thay đổi
-  useEffect(() => { setPage(1); }, [query, statusFilter]);
+  // Reset page khi filter / sort thay đổi
+  useEffect(() => { setPage(1); }, [query, statusFilter, sortDir]);
 
   // ── Derived list ──────────────────────────────────────────────────────
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase();
-    return chapters.filter((c) => {
+    const result = chapters.filter((c) => {
       const matchStatus = statusFilter === 'all' || c.status === statusFilter;
       const matchQuery  = !q
         || String(c.chapterNumber).includes(q)
         || (c.title?.toLowerCase().includes(q) ?? false);
       return matchStatus && matchQuery;
     });
-  }, [chapters, query, statusFilter]);
+
+    return sortDir === 'asc'
+      ? result
+      : [...result].sort((a, b) => b.chapterNumber - a.chapterNumber);
+  }, [chapters, query, statusFilter, sortDir]);
 
   const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
   const paginated  = filtered.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
@@ -182,8 +189,24 @@ export default function NovelDetailPage() {
                 )}
               </div>
 
-              {/* Status filter pills */}
-              <div className="flex gap-1.5 flex-wrap">
+              {/* Sort + Status filter pills */}
+              <div className="flex gap-1.5 flex-wrap items-center">
+                {/* Sort direction toggle */}
+                <button
+                  onClick={() => setSortDir((d) => d === 'asc' ? 'desc' : 'asc')}
+                  title={sortDir === 'asc' ? 'Đang: Cũ → Mới' : 'Đang: Mới → Cũ'}
+                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg
+                             text-xs font-medium border transition-colors
+                             border-gray-300 dark:border-gray-600
+                             bg-white dark:bg-gray-700
+                             text-gray-700 dark:text-gray-300
+                             hover:bg-gray-50 dark:hover:bg-gray-600"
+                >
+                  <ArrowUpDown className="h-3.5 w-3.5" />
+                  {sortDir === 'asc' ? 'Ch. tăng dần' : 'Ch. giảm dần'}
+                </button>
+
+                {/* Status filter pills */}
                 {(
                   [
                     { value: 'all',                label: 'Tất cả' },
