@@ -64,22 +64,28 @@ export default function ReadingSettingsPanel({ onClose }: Props) {
 
       {/* Panel — always light regardless of reading theme */}
       <div className="relative w-full sm:w-96 sm:rounded-2xl rounded-t-2xl shadow-2xl z-10
-                      bg-white text-gray-900 max-h-[90vh] overflow-y-auto">
+                      bg-white text-gray-900 max-h-[85vh] overflow-y-auto overscroll-contain pb-safe sm:pb-0">
+
+        {/* Drag handle (mobile) */}
+        <div className="sm:hidden flex justify-center pt-2.5">
+          <span className="h-1 w-10 rounded-full bg-gray-300" />
+        </div>
 
         {/* Header */}
-        <div className="flex items-center justify-between px-5 py-4 border-b border-gray-200">
+        <div className="flex items-center justify-between px-5 py-3 sm:py-4 border-b border-gray-200">
           <h2 className="font-semibold text-base">Cài đặt đọc</h2>
           <div className="flex items-center gap-2">
             <button
               onClick={reset}
               title="Đặt lại mặc định"
-              className="p-1.5 rounded-lg text-gray-400 hover:text-gray-600 hover:bg-gray-100"
+              className="p-2 rounded-lg text-gray-400 hover:text-gray-600 hover:bg-gray-100"
             >
               <RotateCcw className="h-4 w-4" />
             </button>
             <button
               onClick={onClose}
-              className="p-1.5 rounded-lg text-gray-400 hover:text-gray-600 hover:bg-gray-100"
+              aria-label="Đóng"
+              className="p-2 -mr-1.5 rounded-lg text-gray-400 hover:text-gray-600 hover:bg-gray-100"
             >
               <X className="h-4 w-4" />
             </button>
@@ -128,7 +134,7 @@ export default function ReadingSettingsPanel({ onClose }: Props) {
               <button
                 onClick={() => update({ fontSize: Math.max(14, settings.fontSize - 1) })}
                 disabled={settings.fontSize <= 14}
-                className="p-2 rounded-lg border border-gray-200 hover:bg-gray-100 disabled:opacity-40"
+                className="p-2.5 sm:p-2 rounded-lg border border-gray-200 hover:bg-gray-100 active:bg-gray-200 disabled:opacity-40"
               >
                 <Minus className="h-4 w-4" />
               </button>
@@ -141,7 +147,7 @@ export default function ReadingSettingsPanel({ onClose }: Props) {
               <button
                 onClick={() => update({ fontSize: Math.min(28, settings.fontSize + 1) })}
                 disabled={settings.fontSize >= 28}
-                className="p-2 rounded-lg border border-gray-200 hover:bg-gray-100 disabled:opacity-40"
+                className="p-2.5 sm:p-2 rounded-lg border border-gray-200 hover:bg-gray-100 active:bg-gray-200 disabled:opacity-40"
               >
                 <Plus className="h-4 w-4" />
               </button>
@@ -170,8 +176,8 @@ export default function ReadingSettingsPanel({ onClose }: Props) {
             </div>
           </section>
 
-          {/* ── Độ rộng cột ── */}
-          <section>
+          {/* ── Độ rộng cột (ẩn trên mobile vì màn hình hẹp hơn mức tối thiểu) ── */}
+          <section className="hidden sm:block">
             <div className="flex items-center justify-between mb-2">
               <label className="text-xs font-semibold uppercase tracking-wider text-gray-500">
                 Độ rộng cột

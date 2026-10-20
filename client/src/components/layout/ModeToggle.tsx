@@ -34,7 +34,7 @@ export default function ModeToggle() {
       <button
         onClick={() => switchTo('author')}
         title="Chế độ tác giả"
-        className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium
+        className={`inline-flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-full text-xs font-medium
                     transition-all duration-200
                     ${isAuthor
                       ? 'bg-white dark:bg-gray-700 text-primary-700 dark:text-primary-300 shadow-sm'
@@ -42,13 +42,13 @@ export default function ModeToggle() {
                     }`}
       >
         <PenLine className="h-3.5 w-3.5" />
-        <span className="hidden sm:inline">Tác giả</span>
+        <span>Tác giả</span>
       </button>
 
       <button
         onClick={() => switchTo('reader')}
         title="Chế độ đọc"
-        className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium
+        className={`inline-flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-full text-xs font-medium
                     transition-all duration-200
                     ${!isAuthor
                       ? 'bg-white dark:bg-gray-700 text-primary-700 dark:text-primary-300 shadow-sm'
@@ -56,7 +56,7 @@ export default function ModeToggle() {
                     }`}
       >
         <BookOpen className="h-3.5 w-3.5" />
-        <span className="hidden sm:inline">Đọc</span>
+        <span>Đọc</span>
       </button>
     </div>
   );

@@ -157,19 +157,19 @@ export default function ChapterDetailPage() {
         )}
 
         {/* Chapter Header */}
-        <div className="bg-white dark:bg-gray-800 shadow rounded-lg p-6">
-          <div className="flex justify-between items-start">
-            <div>
-              <div className="flex items-center space-x-3">
-                <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
+        <div className="bg-white dark:bg-gray-800 shadow rounded-lg p-4 sm:p-6">
+          <div className="flex flex-col md:flex-row md:justify-between md:items-start gap-4">
+            <div className="min-w-0">
+              <div className="flex flex-wrap items-center gap-2 sm:gap-3">
+                <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white">
                   Chương {chapter.chapterNumber}
                 </h1>
-                <span className="px-3 py-1 text-sm rounded-full bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-200">
+                <span className="px-2.5 sm:px-3 py-0.5 sm:py-1 text-xs sm:text-sm rounded-full bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-200">
                   {getChapterStatusText(chapter.status)}
                 </span>
               </div>
               {chapter.title && (
-                <h2 className="mt-2 text-xl text-gray-700 dark:text-gray-300">
+                <h2 className="mt-2 text-lg sm:text-xl text-gray-700 dark:text-gray-300 break-words">
                   {chapter.title}
                 </h2>
               )}
@@ -178,10 +178,10 @@ export default function ChapterDetailPage() {
               </div>
             </div>
 
-            <div className="flex space-x-2">
+            <div className="flex flex-wrap gap-2 shrink-0 [&>*]:flex-1 [&>*]:justify-center md:[&>*]:flex-none">
               <button
                 onClick={() => loadVersions()}
-                className="inline-flex items-center px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg shadow-sm text-sm font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600"
+                className="inline-flex items-center px-4 py-2.5 md:py-2 border border-gray-300 dark:border-gray-600 rounded-lg shadow-sm text-sm font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600"
               >
                 <History className="h-4 w-4 mr-2" />
                 Lịch sử
@@ -191,7 +191,7 @@ export default function ChapterDetailPage() {
                 <>
                   <Link
                     href={`/novels/${novelId}/chapters/${chapterId}/edit`}
-                    className="inline-flex items-center px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg shadow-sm text-sm font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600"
+                    className="inline-flex items-center px-4 py-2.5 md:py-2 border border-gray-300 dark:border-gray-600 rounded-lg shadow-sm text-sm font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600"
                   >
                     <Edit className="h-4 w-4 mr-2" />
                     Chỉnh sửa
@@ -199,7 +199,7 @@ export default function ChapterDetailPage() {
                   <button
                     onClick={handleLock}
                     disabled={isActionLoading}
-                    className="inline-flex items-center px-4 py-2 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-primary-600 hover:bg-primary-700 disabled:opacity-50"
+                    className="inline-flex items-center px-4 py-2.5 md:py-2 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-primary-600 hover:bg-primary-700 disabled:opacity-50"
                   >
                     <Lock className="h-4 w-4 mr-2" />
                     Khóa
@@ -211,7 +211,7 @@ export default function ChapterDetailPage() {
                 <button
                   onClick={handleUnlock}
                   disabled={isActionLoading}
-                  className="inline-flex items-center px-4 py-2 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-primary-600 hover:bg-primary-700 disabled:opacity-50"
+                  className="inline-flex items-center px-4 py-2.5 md:py-2 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-primary-600 hover:bg-primary-700 disabled:opacity-50"
                 >
                   <Unlock className="h-4 w-4 mr-2" />
                   Mở khóa
@@ -223,7 +223,7 @@ export default function ChapterDetailPage() {
 
         {/* Versions Sidebar */}
         {showVersions && (
-          <div className="bg-white dark:bg-gray-800 shadow rounded-lg p-6">
+          <div className="bg-white dark:bg-gray-800 shadow rounded-lg p-4 sm:p-6">
             <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
               Lịch sử phiên bản
             </h3>
@@ -231,9 +231,9 @@ export default function ChapterDetailPage() {
               {versions.map((version) => (
                 <div
                   key={version.id}
-                  className="flex items-center justify-between p-3 border border-gray-200 dark:border-gray-700 rounded-lg"
+                  className="flex items-center justify-between gap-3 p-3 border border-gray-200 dark:border-gray-700 rounded-lg"
                 >
-                  <div>
+                  <div className="min-w-0">
                     <div className="text-sm font-medium text-gray-900 dark:text-white">
                       Phiên bản {version.versionNumber}
                     </div>
@@ -249,7 +249,7 @@ export default function ChapterDetailPage() {
                   <button
                     onClick={() => handleRestoreVersion(version.id)}
                     disabled={isActionLoading || !canEdit}
-                    className="text-sm text-primary-600 hover:text-primary-700 disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="shrink-0 px-2 py-1.5 -mr-1 rounded-lg text-sm text-primary-600 hover:text-primary-700 hover:bg-primary-50 dark:hover:bg-primary-900/20 disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     Khôi phục
                   </button>
@@ -260,10 +260,10 @@ export default function ChapterDetailPage() {
         )}
 
         {/* Chapter Content */}
-        <div className="bg-white dark:bg-gray-800 shadow rounded-lg p-8">
+        <div className="bg-white dark:bg-gray-800 shadow rounded-lg p-4 sm:p-8">
           {chapter.title && (
             <div className="mb-6 pb-6 border-b border-gray-200 dark:border-gray-700">
-              <h1 className="text-3xl font-sans font-bold text-gray-900 dark:text-white">
+              <h1 className="text-2xl sm:text-3xl font-sans font-bold text-gray-900 dark:text-white break-words">
                 {chapter.title}
               </h1>
             </div>

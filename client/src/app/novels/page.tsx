@@ -49,16 +49,17 @@ export default function NovelsPage() {
   return (
     <ProtectedLayout>
       <div className="space-y-6">
-        <div className="flex justify-between items-center">
-          <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
+        <div className="flex justify-between items-center gap-3">
+          <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white">
             Truyện của tôi
           </h1>
           <Link
             href="/novels/new"
-            className="inline-flex items-center px-4 py-2 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500"
+            className="shrink-0 inline-flex items-center px-3 sm:px-4 py-2 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-primary-600 hover:bg-primary-700 active:bg-primary-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500"
           >
-            <Plus className="h-5 w-5 mr-2" />
-            Tạo truyện mới
+            <Plus className="h-5 w-5 mr-1.5 sm:mr-2" />
+            <span className="sm:hidden">Tạo mới</span>
+            <span className="hidden sm:inline">Tạo truyện mới</span>
           </Link>
         </div>
 
@@ -73,7 +74,7 @@ export default function NovelsPage() {
             <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600"></div>
           </div>
         ) : novels.length === 0 ? (
-          <div className="text-center py-12 bg-white dark:bg-gray-800 rounded-lg shadow">
+          <div className="text-center py-12 px-4 bg-white dark:bg-gray-800 rounded-lg shadow">
             <BookOpen className="mx-auto h-12 w-12 text-gray-400" />
             <h3 className="mt-2 text-sm font-medium text-gray-900 dark:text-white">
               Chưa có truyện nào
@@ -92,14 +93,14 @@ export default function NovelsPage() {
             </div>
           </div>
         ) : (
-          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+          <div className="grid gap-4 sm:gap-6 md:grid-cols-2 lg:grid-cols-3">
             {novels.map((novel) => (
               <Link
                 key={novel.id}
                 href={`/novels/${novel.id}`}
-                className="block bg-white dark:bg-gray-800 rounded-lg shadow hover:shadow-lg transition-shadow overflow-hidden"
+                className="block bg-white dark:bg-gray-800 rounded-lg shadow hover:shadow-lg active:scale-[0.99] transition overflow-hidden"
               >
-                <div className="p-6">
+                <div className="p-4 sm:p-6">
                   <div className="flex items-start justify-between">
                     <h3 className="text-lg font-semibold text-gray-900 dark:text-white line-clamp-2">
                       {novel.title}
@@ -113,7 +114,7 @@ export default function NovelsPage() {
                     </p>
                   )}
 
-                  <div className="mt-4 space-y-2">
+                  <div className="mt-4 flex flex-wrap gap-x-4 gap-y-2 md:block md:space-y-2">
                     {novel.genre && (
                       <div className="flex items-center text-sm text-gray-500 dark:text-gray-400">
                         <BookOpen className="h-4 w-4 mr-2" />

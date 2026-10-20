@@ -63,7 +63,7 @@ export default function ProtectedLayout({
       {noPadding ? (
         <>{children}</>
       ) : (
-        <main className="py-10">
+        <main className="py-5 sm:py-10">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             {children}
           </div>

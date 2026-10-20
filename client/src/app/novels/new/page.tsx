@@ -65,8 +65,8 @@ export default function NewNovelPage() {
           </Link>
         </div>
 
-        <div className="bg-white dark:bg-gray-800 shadow rounded-lg p-6">
-          <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">
+        <div className="bg-white dark:bg-gray-800 shadow rounded-lg p-4 sm:p-6">
+          <h1 className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white mb-6">
             Tạo truyện mới
           </h1>
 
@@ -155,18 +155,18 @@ export default function NewNovelPage() {
               />
             </div>
 
-            <div className="flex items-center">
+            <label className="flex items-center py-1 cursor-pointer select-none">
               <input
                 {...register('isPrivate')}
                 type="checkbox"
-                className="h-4 w-4 text-primary-600 focus:ring-primary-500 border-gray-300 rounded"
+                className="h-5 w-5 sm:h-4 sm:w-4 text-primary-600 focus:ring-primary-500 border-gray-300 rounded"
               />
-              <label className="ml-2 block text-sm text-gray-700 dark:text-gray-300">
+              <span className="ml-2 block text-sm text-gray-700 dark:text-gray-300">
                 Chế độ riêng tư (chỉ mình tôi xem được)
-              </label>
-            </div>
+              </span>
+            </label>
 
-            <div className="flex justify-end space-x-3">
+            <div className="flex gap-3 sm:justify-end [&>*]:flex-1 sm:[&>*]:flex-none [&>*]:text-center [&>*]:py-2.5 sm:[&>*]:py-2">
               <Link
                 href="/novels"
                 className="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg shadow-sm text-sm font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500"

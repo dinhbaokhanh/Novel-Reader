@@ -69,10 +69,10 @@ export default function ReaderHomePage() {
 
   return (
     <ProtectedLayout>
-      <div className="space-y-8">
+      <div className="space-y-5 sm:space-y-8">
 
         <div>
-          <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Thư viện</h1>
+          <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white">Thư viện</h1>
           <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
             Chọn truyện bạn muốn đọc hôm nay
           </p>
@@ -89,7 +89,7 @@ export default function ReaderHomePage() {
             <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-primary-600" />
           </div>
         ) : novels.length === 0 ? (
-          <div className="text-center py-20 bg-white dark:bg-gray-800 rounded-2xl shadow">
+          <div className="text-center py-16 sm:py-20 px-4 bg-white dark:bg-gray-800 rounded-2xl shadow">
             <BookOpen className="mx-auto h-14 w-14 text-gray-300 dark:text-gray-600" />
             <h3 className="mt-4 text-base font-semibold text-gray-700 dark:text-gray-300">
               Chưa có truyện nào
@@ -99,7 +99,7 @@ export default function ReaderHomePage() {
             </p>
           </div>
         ) : (
-          <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+          <div className="grid gap-4 sm:gap-5 sm:grid-cols-2 lg:grid-cols-3">
             {novels.map((novel) => (
               <NovelCard key={novel.id} novel={novel} />
             ))}
@@ -151,7 +151,7 @@ function NovelCard({ novel }: { novel: NovelWithProgress }) {
       {/* Status strip */}
       <div className={`h-1.5 w-full ${statusColor[novel.status]}`} />
 
-      <div className="flex flex-col flex-1 p-5 gap-4">
+      <div className="flex flex-col flex-1 p-4 sm:p-5 gap-4">
 
         {/* Title + status */}
         <div>
@@ -203,13 +203,14 @@ function NovelCard({ novel }: { novel: NovelWithProgress }) {
                 value={tocQuery}
                 onChange={(e) => setTocQuery(e.target.value)}
                 placeholder="Tìm chương…"
-                className="flex-1 text-xs bg-transparent outline-none
+                className="flex-1 min-w-0 py-1 text-xs bg-transparent outline-none
                            text-gray-700 dark:text-gray-300
                            placeholder-gray-400 dark:placeholder-gray-500"
               />
               {tocQuery && (
                 <button onClick={() => setTocQuery('')}
-                  className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300">
+                  aria-label="Xóa tìm kiếm"
+                  className="p-1 -m-1 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300">
                   <X className="h-3.5 w-3.5" />
                 </button>
               )}
@@ -228,7 +229,7 @@ function NovelCard({ novel }: { novel: NovelWithProgress }) {
                     <button
                       onClick={() => router.push(`/read/${novel.id}/${entry.id}`)}
                       className={`w-full text-left flex items-center justify-between
-                                  px-4 py-2.5 transition-colors
+                                  px-4 py-3 sm:py-2.5 transition-colors
                                   ${isCurrent
                                     ? 'bg-primary-50 dark:bg-primary-900/20'
                                     : 'hover:bg-gray-50 dark:hover:bg-gray-700/50'}`}
@@ -238,7 +239,7 @@ function NovelCard({ novel }: { novel: NovelWithProgress }) {
                           {isCurrent && (
                             <span className="w-1.5 h-1.5 rounded-full bg-primary-500 shrink-0" />
                           )}
-                          <span className={`text-xs truncate
+                          <span className={`text-sm sm:text-xs truncate
                             ${isCurrent
                               ? 'font-medium text-primary-700 dark:text-primary-300'
                               : 'text-gray-700 dark:text-gray-300'}`}>
@@ -267,7 +268,7 @@ function NovelCard({ novel }: { novel: NovelWithProgress }) {
           {hasContinue && (
             <button
               onClick={() => router.push(`/read/${novel.id}/${novel.continueChapterId}`)}
-              className="w-full inline-flex items-center justify-between px-4 py-2.5
+              className="w-full inline-flex items-center justify-between px-4 py-3 sm:py-2.5
                          rounded-xl text-sm font-medium text-white
                          bg-primary-600 hover:bg-primary-700 transition-colors shadow-sm"
             >
@@ -287,7 +288,7 @@ function NovelCard({ novel }: { novel: NovelWithProgress }) {
               }
               disabled={!hasChapters}
               className={`flex-1 inline-flex items-center justify-center gap-2
-                          px-3 py-2 rounded-xl text-sm font-medium transition-colors
+                          px-3 py-2.5 sm:py-2 rounded-xl text-sm font-medium transition-colors
                           ${hasChapters
                             ? hasContinue
                               ? 'bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-300'
@@ -303,7 +304,7 @@ function NovelCard({ novel }: { novel: NovelWithProgress }) {
               onClick={toggleToc}
               disabled={!hasChapters}
               className={`inline-flex items-center justify-center gap-1.5
-                          px-3 py-2 rounded-xl text-sm font-medium transition-colors
+                          px-3 py-2.5 sm:py-2 rounded-xl text-sm font-medium transition-colors
                           ${tocOpen
                             ? 'bg-primary-100 dark:bg-primary-900/30 text-primary-700 dark:text-primary-300 border border-primary-200 dark:border-primary-800'
                             : 'border border-gray-200 dark:border-gray-600 text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-700'}
@@ -312,7 +313,7 @@ function NovelCard({ novel }: { novel: NovelWithProgress }) {
               {tocOpen
                 ? <ChevronUp className="h-4 w-4" />
                 : <ChevronDown className="h-4 w-4" />}
-              <span className="hidden sm:inline">Mục lục</span>
+              <span>Mục lục</span>
             </button>
           </div>
 

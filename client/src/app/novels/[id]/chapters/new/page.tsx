@@ -78,7 +78,7 @@ export default function NewChapterPage() {
                         flex items-center justify-between h-14 gap-3">
 
           {/* Left: back + label */}
-          <div className="flex items-center gap-3 min-w-0">
+          <div className="flex items-center gap-2 sm:gap-3 min-w-0">
             <Link
               href={`/novels/${novelId}`}
               className="p-1.5 rounded-lg text-gray-500 hover:text-gray-800
@@ -124,7 +124,7 @@ export default function NewChapterPage() {
       </div>
 
       {/* ── Page body ──────────────────────────────────────────────────────── */}
-      <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 pt-6 pb-16">
+      <div className="max-w-5xl mx-auto px-3 sm:px-6 lg:px-8 pt-4 sm:pt-6 pb-16">
 
         {error && (
           <div className="mb-4 bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400
@@ -133,7 +133,7 @@ export default function NewChapterPage() {
           </div>
         )}
 
-        <div className="bg-white dark:bg-gray-800 shadow rounded-lg p-6 space-y-5">
+        <div className="bg-white dark:bg-gray-800 shadow rounded-lg p-4 sm:p-6 space-y-5">
 
           {/* ── Số chương + Tiêu đề ───────────────────────────────────── */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
@@ -184,12 +184,12 @@ export default function NewChapterPage() {
           />
 
           {/* ── Bottom create (secondary) ────────────────────────────────── */}
-          <div className="flex justify-end gap-3 pt-2 border-t border-gray-200 dark:border-gray-700">
+          <div className="flex justify-end gap-3 pt-4 border-t border-gray-200 dark:border-gray-700">
             <button
               type="button"
               onClick={handleSubmit(onSubmit)}
               disabled={isLoading}
-              className="inline-flex items-center px-4 py-2 rounded-lg text-sm font-medium text-white
+              className="w-full sm:w-auto justify-center inline-flex items-center px-4 py-2.5 sm:py-2 rounded-lg text-sm font-medium text-white
                          bg-primary-600 hover:bg-primary-700
                          disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
             >

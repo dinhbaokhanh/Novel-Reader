@@ -82,7 +82,7 @@ export default function MarkdownRenderer({
   };
 
   return (
-    <div className={`max-w-none leading-relaxed ${className}`} style={baseStyle}>
+    <div className={`max-w-none leading-relaxed break-words ${className}`} style={baseStyle}>
       <ReactMarkdown
         remarkPlugins={[remarkGfm]}
         rehypePlugins={[rehypeRaw]}

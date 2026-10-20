@@ -220,12 +220,12 @@ export default function ReadPage() {
       {/* ── Sticky header ──────────────────────────────────────────────── */}
       <header
         className={cn(
-          'fixed top-0 left-0 right-0 z-40 border-b backdrop-blur-md transition-transform duration-300',
+          'fixed top-0 left-0 right-0 z-40 border-b backdrop-blur-md transition-transform duration-300 pt-safe',
           THEME_HEADER[theme],
           headerVisible ? 'translate-y-0' : '-translate-y-full',
         )}
       >
-        <div className="flex items-center h-12 px-4 gap-2">
+        <div className="flex items-center h-12 px-2 sm:px-4 gap-1 sm:gap-2">
           <Link
             href={`/novels/${novelId}`}
             className={cn('p-2 rounded-lg transition-colors shrink-0', THEME_BTN_GHOST[theme])}
@@ -269,16 +269,16 @@ export default function ReadPage() {
       </header>
 
       {/* ── Reading area ────────────────────────────────────────────────── */}
-      <main className="pt-12 pb-32 px-4 sm:px-6">
+      <main className="pt-12 pb-32 px-5 sm:px-6">
         <article className="mx-auto" style={contentStyle}>
 
           {/* Chapter heading */}
-          <header className="pt-10 pb-8 text-center">
+          <header className="pt-8 sm:pt-10 pb-6 sm:pb-8 text-center">
             <p className="text-sm uppercase tracking-widest opacity-40 mb-2">
               Chương {chapter.chapterNumber}
             </p>
             {chapter.title && (
-              <h1 className="text-2xl sm:text-3xl font-bold leading-tight">
+              <h1 className="text-2xl sm:text-3xl font-bold leading-tight text-balance break-words">
                 {chapter.title}
               </h1>
             )}
@@ -298,11 +298,11 @@ export default function ReadPage() {
       {/* ── Bottom navigation ───────────────────────────────────────────── */}
       <nav
         className={cn(
-          'fixed bottom-0 left-0 right-0 z-40 border-t backdrop-blur-md px-4 py-3',
+          'fixed bottom-0 left-0 right-0 z-40 border-t backdrop-blur-md px-3 sm:px-4 pt-3 pb-safe',
           THEME_HEADER[theme],
         )}
       >
-        <div className="flex items-center justify-between max-w-xl mx-auto gap-3">
+        <div className="flex items-center justify-between max-w-xl mx-auto gap-2 sm:gap-3">
           <button
             onClick={goToPrev}
             disabled={!prev}
@@ -317,7 +317,8 @@ export default function ReadPage() {
 
           <button
             onClick={() => setShowToc(true)}
-            className={cn('px-3 py-2.5 rounded-xl transition-colors', THEME_BTN_NAV[theme])}
+            title="Mục lục"
+            className={cn('px-3.5 py-2.5 rounded-xl transition-colors', THEME_BTN_NAV[theme])}
           >
             <BookOpen className="h-4 w-4" />
           </button>
@@ -341,7 +342,7 @@ export default function ReadPage() {
         <div className="fixed inset-0 z-50 flex">
           <div className="absolute inset-0 bg-black/50 backdrop-blur-sm" onClick={() => setShowToc(false)} />
           <aside className={cn(
-            'relative z-10 w-72 sm:w-80 max-w-full h-full flex flex-col shadow-2xl',
+            'relative z-10 w-[85vw] max-w-xs sm:w-80 sm:max-w-none h-full flex flex-col shadow-2xl pt-safe pb-safe',
             THEME_DRAWER[theme],
           )}>
             {/* Drawer header */}
@@ -349,9 +350,10 @@ export default function ReadPage() {
               <h2 className="font-semibold text-sm">Mục lục</h2>
               <button
                 onClick={() => setShowToc(false)}
-                className={cn('p-1.5 rounded-lg', THEME_BTN_GHOST[theme])}
+                aria-label="Đóng mục lục"
+                className={cn('p-2 -mr-1 rounded-lg', THEME_BTN_GHOST[theme])}
               >
-                <X className="h-4 w-4" />
+                <X className="h-5 w-5 sm:h-4 sm:w-4" />
               </button>
             </div>
 

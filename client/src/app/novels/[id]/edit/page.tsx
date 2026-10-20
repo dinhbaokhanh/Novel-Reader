@@ -128,8 +128,8 @@ export default function EditNovelPage() {
           </Link>
         </div>
 
-        <div className="bg-white dark:bg-gray-800 shadow rounded-lg p-6">
-          <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">
+        <div className="bg-white dark:bg-gray-800 shadow rounded-lg p-4 sm:p-6">
+          <h1 className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white mb-6">
             Chỉnh sửa truyện
           </h1>
 
@@ -215,28 +215,28 @@ export default function EditNovelPage() {
               />
             </div>
 
-            <div className="flex items-center">
+            <label className="flex items-center py-1 cursor-pointer select-none">
               <input
                 {...register('isPrivate')}
                 type="checkbox"
-                className="h-4 w-4 text-primary-600 focus:ring-primary-500 border-gray-300 rounded"
+                className="h-5 w-5 sm:h-4 sm:w-4 text-primary-600 focus:ring-primary-500 border-gray-300 rounded"
               />
-              <label className="ml-2 block text-sm text-gray-700 dark:text-gray-300">
+              <span className="ml-2 block text-sm text-gray-700 dark:text-gray-300">
                 Chế độ riêng tư
-              </label>
-            </div>
+              </span>
+            </label>
 
-            <div className="flex justify-between items-center pt-4 border-t border-gray-200 dark:border-gray-700">
+            <div className="flex flex-col-reverse sm:flex-row sm:justify-between sm:items-center gap-3 pt-4 border-t border-gray-200 dark:border-gray-700">
               <button
                 type="button"
                 onClick={handleArchive}
-                className="inline-flex items-center px-4 py-2 border border-red-300 dark:border-red-600 rounded-lg shadow-sm text-sm font-medium text-red-700 dark:text-red-400 bg-white dark:bg-gray-700 hover:bg-red-50 dark:hover:bg-red-900/20"
+                className="justify-center inline-flex items-center px-4 py-2.5 sm:py-2 border border-red-300 dark:border-red-600 rounded-lg shadow-sm text-sm font-medium text-red-700 dark:text-red-400 bg-white dark:bg-gray-700 hover:bg-red-50 dark:hover:bg-red-900/20"
               >
                 <Trash2 className="h-4 w-4 mr-2" />
                 Lưu trữ truyện
               </button>
 
-              <div className="flex space-x-3">
+              <div className="flex gap-3 [&>*]:flex-1 sm:[&>*]:flex-none [&>*]:justify-center [&>*]:text-center [&>*]:py-2.5 sm:[&>*]:py-2">
                 <Link
                   href={`/novels/${novelId}`}
                   className="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg shadow-sm text-sm font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600"

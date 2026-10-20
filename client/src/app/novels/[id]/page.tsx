@@ -109,14 +109,14 @@ export default function NovelDetailPage() {
         </Link>
 
         {/* Novel header */}
-        <div className="bg-white dark:bg-gray-800 shadow rounded-lg p-6">
-          <div className="flex justify-between items-start gap-4">
+        <div className="bg-white dark:bg-gray-800 shadow rounded-lg p-4 sm:p-6">
+          <div className="flex flex-col md:flex-row md:justify-between md:items-start gap-4">
             <div className="flex-1 min-w-0">
-              <h1 className="text-3xl font-bold text-gray-900 dark:text-white">{novel.title}</h1>
+              <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white break-words">{novel.title}</h1>
               {novel.description && (
-                <p className="mt-2 text-gray-600 dark:text-gray-400">{novel.description}</p>
+                <p className="mt-2 text-sm sm:text-base text-gray-600 dark:text-gray-400 whitespace-pre-line">{novel.description}</p>
               )}
-              <div className="mt-4 flex flex-wrap gap-4 text-sm text-gray-500 dark:text-gray-400">
+              <div className="mt-4 flex flex-wrap gap-x-4 gap-y-2 text-sm text-gray-500 dark:text-gray-400">
                 {novel.genre && (
                   <span className="flex items-center"><BookOpen className="h-4 w-4 mr-1" />{novel.genre}</span>
                 )}
@@ -131,14 +131,14 @@ export default function NovelDetailPage() {
             <div className="flex items-center gap-2 shrink-0">
               {chapters.length > 0 && (
                 <Link href={`/read/${novelId}/${chapters[0].id}`}
-                  className="inline-flex items-center px-4 py-2 border border-transparent
+                  className="flex-1 md:flex-none justify-center inline-flex items-center px-4 py-2.5 md:py-2 border border-transparent
                              rounded-lg shadow-sm text-sm font-medium text-white
                              bg-primary-600 hover:bg-primary-700">
                   <BookMarked className="h-4 w-4 mr-2" />Đọc ngay
                 </Link>
               )}
               <Link href={`/novels/${novelId}/edit`}
-                className="inline-flex items-center px-4 py-2 border border-gray-300
+                className="flex-1 md:flex-none justify-center inline-flex items-center px-4 py-2.5 md:py-2 border border-gray-300
                            dark:border-gray-600 rounded-lg shadow-sm text-sm font-medium
                            text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-700
                            hover:bg-gray-50 dark:hover:bg-gray-600">
@@ -149,11 +149,11 @@ export default function NovelDetailPage() {
         </div>
 
         {/* Chapters section */}
-        <div className="bg-white dark:bg-gray-800 shadow rounded-lg p-6">
+        <div className="bg-white dark:bg-gray-800 shadow rounded-lg p-4 sm:p-6">
 
           {/* Section header */}
           <div className="flex flex-wrap justify-between items-center gap-3 mb-4">
-            <h2 className="text-xl font-semibold text-gray-900 dark:text-white">
+            <h2 className="text-lg sm:text-xl font-semibold text-gray-900 dark:text-white">
               Danh sách chương
               <span className="ml-2 text-sm font-normal text-gray-400">
                 ({filtered.length}/{chapters.length})
@@ -188,14 +188,15 @@ export default function NovelDetailPage() {
                   value={query}
                   onChange={(e) => setQuery(e.target.value)}
                   placeholder="Tìm theo số chương hoặc tiêu đề…"
-                  className="w-full pl-9 pr-8 py-2 text-sm border border-gray-300
+                  className="w-full pl-9 pr-9 py-2.5 sm:py-2 text-sm border border-gray-300
                              dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700
                              text-gray-900 dark:text-white placeholder-gray-400
                              focus:outline-none focus:ring-2 focus:ring-primary-500"
                 />
                 {query && (
                   <button onClick={() => setQuery('')}
-                    className="absolute right-2.5 top-1/2 -translate-y-1/2
+                    aria-label="Xóa tìm kiếm"
+                    className="absolute right-1.5 top-1/2 -translate-y-1/2 p-1.5
                                text-gray-400 hover:text-gray-600 dark:hover:text-gray-300">
                     <X className="h-3.5 w-3.5" />
                   </button>
@@ -203,12 +204,12 @@ export default function NovelDetailPage() {
               </div>
 
               {/* Sort + Status filter pills */}
-              <div className="flex gap-1.5 flex-wrap items-center">
+              <div className="flex gap-1.5 items-center overflow-x-auto scrollbar-none -mx-4 px-4 sm:mx-0 sm:px-0 sm:flex-wrap">
                 {/* Sort direction toggle */}
                 <button
                   onClick={handleSortToggle}
                   title={sortDir === 'asc' ? 'Đang: Cũ → Mới' : 'Đang: Mới → Cũ'}
-                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg
+                  className="shrink-0 whitespace-nowrap inline-flex items-center gap-1.5 px-3 py-2 sm:py-1.5 rounded-lg
                              text-xs font-medium border transition-colors
                              border-gray-300 dark:border-gray-600
                              bg-white dark:bg-gray-700
@@ -230,7 +231,7 @@ export default function NovelDetailPage() {
                   <button
                     key={f.value}
                     onClick={() => setStatusFilter(f.value)}
-                    className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-colors
+                    className={`shrink-0 whitespace-nowrap px-3 py-2 sm:py-1.5 rounded-lg text-xs font-medium transition-colors
                       ${statusFilter === f.value
                         ? 'bg-primary-600 text-white'
                         : 'bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'}`}
@@ -262,20 +263,20 @@ export default function NovelDetailPage() {
               <div className="space-y-1.5">
                 {paginated.map((chapter) => (
                   <div key={chapter.id}
-                    className="flex items-center px-4 py-3 border border-gray-200
+                    className="flex items-center px-3 sm:px-4 py-3 border border-gray-200
                                dark:border-gray-700 rounded-lg
                                hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors">
                     <Link href={`/novels/${novelId}/chapters/${chapter.id}`}
                       className="flex-1 min-w-0">
                       <div className="flex items-center gap-2">
-                        <span className="text-xs text-gray-400 dark:text-gray-500 shrink-0 w-16">
+                        <span className="text-xs text-gray-400 dark:text-gray-500 shrink-0 w-12 sm:w-16">
                           Ch.{chapter.chapterNumber}
                         </span>
                         <span className="text-sm font-medium text-gray-900 dark:text-white truncate">
                           {chapter.title || `Chương ${chapter.chapterNumber}`}
                         </span>
                       </div>
-                      <div className="mt-0.5 ml-[4.5rem] flex items-center gap-3 text-xs
+                      <div className="mt-0.5 ml-14 sm:ml-[4.5rem] flex items-center gap-3 text-xs
                                       text-gray-500 dark:text-gray-400">
                         <span>{formatNumber(chapter.wordCount)} từ</span>
                         <span>{getChapterStatusText(chapter.status)}</span>
@@ -283,13 +284,14 @@ export default function NovelDetailPage() {
                       </div>
                     </Link>
 
-                    <div className="flex items-center gap-2 ml-3 shrink-0">
+                    <div className="flex items-center gap-2 ml-2 sm:ml-3 shrink-0">
                       <Link href={`/read/${novelId}/${chapter.id}`}
-                        className="inline-flex items-center px-2.5 py-1.5 rounded-lg text-xs
+                        title="Đọc chương"
+                        className="inline-flex items-center px-2.5 py-2 sm:py-1.5 rounded-lg text-xs
                                    font-medium text-primary-600 bg-primary-50
                                    hover:bg-primary-100 dark:text-primary-400
                                    dark:bg-primary-900/30 dark:hover:bg-primary-900/50">
-                        <BookOpen className="h-3.5 w-3.5 mr-1" />Đọc
+                        <BookOpen className="h-4 w-4 sm:h-3.5 sm:w-3.5 sm:mr-1" /><span className="hidden sm:inline">Đọc</span>
                       </Link>
                       {chapter.status === 'completed_locked'
                         ? <Lock className="h-4 w-4 text-gray-400" />
@@ -303,16 +305,16 @@ export default function NovelDetailPage() {
 
               {/* Pagination */}
               {totalPages > 1 && (
-                <div className="flex items-center justify-between mt-4 pt-4
+                <div className="flex flex-col-reverse sm:flex-row items-center justify-between gap-3 mt-4 pt-4
                                 border-t border-gray-200 dark:border-gray-700">
                   <span className="text-xs text-gray-500 dark:text-gray-400">
                     Trang {page}/{totalPages} · {filtered.length} chương
                   </span>
-                  <div className="flex gap-1.5">
+                  <div className="flex flex-wrap justify-center gap-1.5">
                     <button
                       onClick={() => setPage((p) => Math.max(1, p - 1))}
                       disabled={page === 1}
-                      className="px-3 py-1.5 text-xs rounded-lg border border-gray-300
+                      className="px-3 py-2 sm:py-1.5 text-xs rounded-lg border border-gray-300
                                  dark:border-gray-600 disabled:opacity-40
                                  hover:bg-gray-50 dark:hover:bg-gray-700
                                  text-gray-700 dark:text-gray-300">
@@ -335,7 +337,7 @@ export default function NovelDetailPage() {
                         ) : (
                           <button key={item}
                             onClick={() => setPage(item as number)}
-                            className={`px-3 py-1.5 text-xs rounded-lg border transition-colors
+                            className={`min-w-[2.25rem] px-3 py-2 sm:py-1.5 text-xs rounded-lg border transition-colors
                               ${page === item
                                 ? 'bg-primary-600 border-primary-600 text-white'
                                 : 'border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700'}`}>
@@ -347,7 +349,7 @@ export default function NovelDetailPage() {
                     <button
                       onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
                       disabled={page === totalPages}
-                      className="px-3 py-1.5 text-xs rounded-lg border border-gray-300
+                      className="px-3 py-2 sm:py-1.5 text-xs rounded-lg border border-gray-300
                                  dark:border-gray-600 disabled:opacity-40
                                  hover:bg-gray-50 dark:hover:bg-gray-700
                                  text-gray-700 dark:text-gray-300">

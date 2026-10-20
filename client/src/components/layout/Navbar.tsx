@@ -14,9 +14,9 @@ export default function Navbar() {
   const { mode } = useModeStore();
 
   return (
-    <nav className="bg-white dark:bg-gray-800 shadow">
+    <nav className="bg-white dark:bg-gray-800 shadow pt-safe">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between h-16">
+        <div className="flex justify-between h-14 sm:h-16">
 
           {/* ── Left: logo + nav links ──────────────────────────────── */}
           <div className="flex items-center">
@@ -62,7 +62,7 @@ export default function Navbar() {
           </div>
 
           {/* ── Right: mode toggle + user + logout ─────────────────── */}
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-1.5 sm:gap-3">
             {/* Mode toggle pill */}
             <ModeToggle />
 
@@ -76,7 +76,7 @@ export default function Navbar() {
             <button
               onClick={logout}
               title="Đăng xuất"
-              className="p-2 rounded-md text-gray-500 dark:text-gray-400
+              className="p-2.5 sm:p-2 rounded-md text-gray-500 dark:text-gray-400
                          hover:text-gray-800 dark:hover:text-gray-200
                          hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
             >

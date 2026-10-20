@@ -76,8 +76,8 @@ export default function TocPage() {
         </Link>
 
         {/* Novel header */}
-        <div className="bg-white dark:bg-gray-800 rounded-2xl shadow p-6 mb-4">
-          <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
+        <div className="bg-white dark:bg-gray-800 rounded-2xl shadow p-4 sm:p-6 mb-4">
+          <h1 className="text-xl sm:text-2xl font-bold break-words text-gray-900 dark:text-white">
             {novel.title}
           </h1>
           {novel.description && (
@@ -89,7 +89,7 @@ export default function TocPage() {
           {continueId && (
             <Link
               href={`/read/${novelId}/${continueId}`}
-              className="mt-4 inline-flex items-center gap-2 px-4 py-2 rounded-xl text-sm
+              className="mt-4 w-full sm:w-auto justify-center inline-flex items-center gap-2 px-4 py-2.5 sm:py-2 rounded-xl text-sm
                          font-medium text-white bg-primary-600 hover:bg-primary-700 transition-colors"
             >
               <BookMarked className="h-4 w-4" />
@@ -118,7 +118,7 @@ export default function TocPage() {
                   <li key={entry.id}>
                     <Link
                       href={`/read/${novelId}/${entry.id}`}
-                      className={`flex items-center justify-between px-5 py-4 transition-colors
+                      className={`flex items-center justify-between px-4 sm:px-5 py-3.5 sm:py-4 transition-colors
                                   ${isCurrent
                                     ? 'bg-primary-50 dark:bg-primary-900/20'
                                     : 'hover:bg-gray-50 dark:hover:bg-gray-700/50'}`}

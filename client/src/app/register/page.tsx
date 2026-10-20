@@ -52,13 +52,13 @@ export default function RegisterPage() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-primary-50 to-primary-100 dark:from-gray-900 dark:to-gray-800 px-4">
-      <div className="max-w-md w-full space-y-8 bg-white dark:bg-gray-800 p-8 rounded-xl shadow-lg">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-primary-50 to-primary-100 dark:from-gray-900 dark:to-gray-800 px-4 py-8">
+      <div className="max-w-md w-full space-y-6 sm:space-y-8 bg-white dark:bg-gray-800 p-6 sm:p-8 rounded-xl shadow-lg">
         <div className="text-center">
           <div className="flex justify-center">
             <BookOpen className="h-12 w-12 text-primary-600" />
           </div>
-          <h2 className="mt-6 text-3xl font-bold text-gray-900 dark:text-white">
+          <h2 className="mt-4 sm:mt-6 text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white">
             Đăng ký
           </h2>
           <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">

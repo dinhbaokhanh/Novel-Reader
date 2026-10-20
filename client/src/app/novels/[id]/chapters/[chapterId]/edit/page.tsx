@@ -130,7 +130,7 @@ export default function EditChapterPage() {
                         flex items-center justify-between h-14 gap-3">
 
           {/* Left: back + chapter label */}
-          <div className="flex items-center gap-3 min-w-0">
+          <div className="flex items-center gap-2 sm:gap-3 min-w-0">
             <Link
               href={`/novels/${novelId}/chapters/${chapterId}`}
               className="p-1.5 rounded-lg text-gray-500 hover:text-gray-800
@@ -142,7 +142,7 @@ export default function EditChapterPage() {
             </Link>
             <span className="text-sm font-medium text-gray-700 dark:text-gray-300 truncate">
               Chương {chapter.chapterNumber}
-              {chapter.title ? ` — ${chapter.title}` : ''}
+              <span className="hidden sm:inline">{chapter.title ? ` — ${chapter.title}` : ''}</span>
             </span>
             {isDirty && (
               <span className="shrink-0 text-xs text-amber-600 dark:text-amber-400
@@ -194,7 +194,7 @@ export default function EditChapterPage() {
       </div>
 
       {/* ── Page body ──────────────────────────────────────────────────────── */}
-      <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 pt-6 pb-16">
+      <div className="max-w-5xl mx-auto px-3 sm:px-6 lg:px-8 pt-4 sm:pt-6 pb-16">
 
         {error && (
           <div className="mb-4 bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400
@@ -203,7 +203,7 @@ export default function EditChapterPage() {
           </div>
         )}
 
-        <div className="bg-white dark:bg-gray-800 shadow rounded-lg p-6 space-y-5">
+        <div className="bg-white dark:bg-gray-800 shadow rounded-lg p-4 sm:p-6 space-y-5">
 
           {/* ── Title ───────────────────────────────────────────────────── */}
           <div>
@@ -250,12 +250,12 @@ export default function EditChapterPage() {
           </div>
 
           {/* ── Bottom save (secondary, for convenience) ─────────────────── */}
-          <div className="flex justify-end gap-3 pt-2 border-t border-gray-200 dark:border-gray-700">
+          <div className="flex justify-end gap-3 pt-4 border-t border-gray-200 dark:border-gray-700">
             <button
               type="button"
               onClick={handleSubmit(onSubmit)}
               disabled={isSaving}
-              className="inline-flex items-center px-4 py-2 rounded-lg text-sm font-medium text-white
+              className="w-full sm:w-auto justify-center inline-flex items-center px-4 py-2.5 sm:py-2 rounded-lg text-sm font-medium text-white
                          bg-primary-600 hover:bg-primary-700
                          disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
             >
@@ -268,22 +268,22 @@ export default function EditChapterPage() {
 
       {/* ── Delete confirmation modal ──────────────────────────────────────── */}
       {showDeleteConfirm && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center px-4">
+        <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center sm:px-4">
           <div
             className="absolute inset-0 bg-black/50 backdrop-blur-sm"
             onClick={() => setShowDeleteConfirm(false)}
           />
-          <div className="relative bg-white dark:bg-gray-800 rounded-2xl shadow-2xl p-6 max-w-sm w-full z-10">
+          <div className="relative bg-white dark:bg-gray-800 rounded-t-2xl sm:rounded-2xl shadow-2xl p-6 pb-safe sm:pb-6 sm:max-w-sm w-full z-10">
             <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
               Xóa chương {chapter.chapterNumber}?
             </h3>
             <p className="text-sm text-gray-600 dark:text-gray-400 mb-6">
               Hành động này không thể hoàn tác. Toàn bộ nội dung và lịch sử phiên bản sẽ bị xóa vĩnh viễn.
             </p>
-            <div className="flex justify-end gap-3">
+            <div className="flex flex-col-reverse sm:flex-row sm:justify-end gap-2 sm:gap-3">
               <button
                 onClick={() => setShowDeleteConfirm(false)}
-                className="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-sm
+                className="px-4 py-2.5 sm:py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-sm
                            font-medium text-gray-700 dark:text-gray-300
                            hover:bg-gray-50 dark:hover:bg-gray-700"
               >
@@ -292,7 +292,7 @@ export default function EditChapterPage() {
               <button
                 onClick={handleDelete}
                 disabled={isDeleting}
-                className="px-4 py-2 rounded-lg text-sm font-medium text-white
+                className="px-4 py-2.5 sm:py-2 rounded-lg text-sm font-medium text-white
                            bg-red-600 hover:bg-red-700
                            disabled:opacity-50 disabled:cursor-not-allowed"
               >

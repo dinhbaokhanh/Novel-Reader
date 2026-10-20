@@ -35,7 +35,7 @@ function ToolBtn({ onClick, active, disabled, title, children }: ToolbarButtonPr
       disabled={disabled}
       title={title}
       className={cn(
-        'p-1.5 rounded text-sm transition-colors',
+        'shrink-0 p-2 sm:p-1.5 rounded text-sm transition-colors',
         active
           ? 'bg-gray-200 dark:bg-gray-600 text-gray-900 dark:text-white'
           : 'text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700',
@@ -48,12 +48,12 @@ function ToolBtn({ onClick, active, disabled, title, children }: ToolbarButtonPr
 }
 
 function Divider() {
-  return <span className="w-px h-5 bg-gray-200 dark:bg-gray-600 mx-1 self-center" />;
+  return <span className="shrink-0 w-px h-5 bg-gray-200 dark:bg-gray-600 mx-1 self-center" />;
 }
 
 function Toolbar({ editor }: { editor: Editor }) {
   return (
-    <div className="flex flex-wrap items-center gap-0.5 px-3 py-2 border-b border-gray-200 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 rounded-t-lg">
+    <div className="flex items-center gap-0.5 px-2 sm:px-3 py-1.5 sm:py-2 border-b overflow-x-auto scrollbar-none sm:flex-wrap border-gray-200 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 rounded-t-lg">
 
       {/* Undo / Redo */}
       <ToolBtn
@@ -360,7 +360,7 @@ export default function RichTextEditor({
         <p className="mt-1 text-sm text-red-600 dark:text-red-400">{error}</p>
       )}
 
-      <p className="mt-1.5 text-xs text-gray-400 dark:text-gray-500">
+      <p className="hidden sm:block mt-1.5 text-xs text-gray-400 dark:text-gray-500">
         Phím tắt: <kbd className="px-1 py-0.5 rounded bg-gray-100 dark:bg-gray-700 text-xs">Ctrl+B</kbd> in đậm,{' '}
         <kbd className="px-1 py-0.5 rounded bg-gray-100 dark:bg-gray-700 text-xs">Ctrl+I</kbd> in nghiêng,{' '}
         <kbd className="px-1 py-0.5 rounded bg-gray-100 dark:bg-gray-700 text-xs">Ctrl+Z</kbd> hoàn tác

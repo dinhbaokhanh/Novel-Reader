@@ -91,8 +91,8 @@ export default function ImportChaptersPage() {
           </Link>
         </div>
 
-        <div className="bg-white dark:bg-gray-800 shadow rounded-lg p-6">
-          <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">
+        <div className="bg-white dark:bg-gray-800 shadow rounded-lg p-4 sm:p-6">
+          <h1 className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white mb-6">
             Import chương từ file
           </h1>
 
@@ -137,7 +137,7 @@ export default function ImportChaptersPage() {
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                 Chọn file <span className="text-red-500">*</span>
               </label>
-              <div className="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-gray-300 dark:border-gray-600 border-dashed rounded-lg hover:border-primary-400 transition-colors">
+              <div className="mt-1 flex justify-center px-4 sm:px-6 pt-5 pb-6 border-2 border-gray-300 dark:border-gray-600 border-dashed rounded-lg hover:border-primary-400 transition-colors">
                 <div className="space-y-1 text-center">
                   {selectedFile ? (
                     <FileText className="mx-auto h-12 w-12 text-primary-600" />
@@ -146,7 +146,7 @@ export default function ImportChaptersPage() {
                   )}
                   <div className="text-sm text-gray-600 dark:text-gray-400">
                     {selectedFile ? (
-                      <p className="font-medium text-gray-900 dark:text-white">
+                      <p className="font-medium text-gray-900 dark:text-white break-all">
                         {selectedFile.name}
                       </p>
                     ) : (
@@ -178,7 +178,7 @@ export default function ImportChaptersPage() {
               </div>
             </div>
 
-            <div className="flex justify-end space-x-3">
+            <div className="flex flex-col-reverse sm:flex-row sm:justify-end gap-2 sm:gap-3 [&>*]:text-center [&>*]:py-2.5 sm:[&>*]:py-2">
               <Link
                 href={`/novels/${novelId}`}
                 className="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg shadow-sm text-sm font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600"
