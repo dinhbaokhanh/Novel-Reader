@@ -86,6 +86,7 @@ export default function ReadPage() {
   const [showSettings,  setShowSettings]  = useState(false);
   const [showToc,       setShowToc]       = useState(false);
   const [bookmarkDone,  setBookmarkDone]  = useState(false);
+  const [bookmarkError, setBookmarkError] = useState('');
   const [headerVisible, setHeaderVisible] = useState(true);
 
   const { settings, load: loadSettings } = useReadingSettings();
@@ -176,10 +177,14 @@ export default function ReadPage() {
   const handleBookmark = async () => {
     try {
       await readerApi.createBookmark({ novelId, chapterId, scrollPosition: Math.round(window.scrollY) });
+      setBookmarkError('');
       setBookmarkDone(true);
       setTimeout(() => setBookmarkDone(false), 2000);
       readerApi.getBookmarks(novelId).then(setBookmarks).catch(() => {});
-    } catch { /* silent */ }
+    } catch {
+      setBookmarkError('Không thể lưu dấu trang. Vui lòng thử lại.');
+      setTimeout(() => setBookmarkError(''), 3500);
+    }
   };
 
   // ── Content inline style (font is always sans-serif) ──────────────────────
@@ -187,7 +192,7 @@ export default function ReadPage() {
     fontSize:   settings.fontSize,
     lineHeight: settings.lineHeight,
     maxWidth:   settings.maxWidth,
-    fontFamily: 'system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif',
+    fontFamily: 'Georgia, Cambria, "Times New Roman", serif',
   };
 
   // ── Loading / error guards ────────────────────────────────────────────────
@@ -242,6 +247,7 @@ export default function ReadPage() {
 
           <button
             onClick={() => setShowToc(true)}
+            aria-label="Mở mục lục"
             className={cn('p-2 rounded-lg transition-colors shrink-0', THEME_BTN_GHOST[theme])}
             title="Mục lục"
           >
@@ -250,6 +256,7 @@ export default function ReadPage() {
 
           <button
             onClick={handleBookmark}
+            aria-label="Đánh dấu vị trí này"
             className={cn('p-2 rounded-lg transition-colors shrink-0', THEME_BTN_GHOST[theme])}
             title="Đánh dấu vị trí này"
           >
@@ -260,6 +267,7 @@ export default function ReadPage() {
 
           <button
             onClick={() => setShowSettings(true)}
+            aria-label="Mở cài đặt đọc"
             className={cn('p-2 rounded-lg transition-colors shrink-0', THEME_BTN_GHOST[theme])}
             title="Cài đặt đọc"
           >
@@ -268,17 +276,23 @@ export default function ReadPage() {
         </div>
       </header>
 
+      {bookmarkError && (
+        <div role="alert" className="fixed left-1/2 top-16 z-50 -translate-x-1/2 rounded-lg bg-red-700 px-4 py-2 text-sm text-white shadow-lg">
+          {bookmarkError}
+        </div>
+      )}
+
       {/* ── Reading area ────────────────────────────────────────────────── */}
-      <main className="pt-12 pb-32 px-5 sm:px-6">
+      <main className="px-5 pb-32 pt-12 sm:px-6">
         <article className="mx-auto" style={contentStyle}>
 
           {/* Chapter heading */}
           <header className="pt-8 sm:pt-10 pb-6 sm:pb-8 text-center">
-            <p className="text-sm uppercase tracking-widest opacity-40 mb-2">
+            <p className="mb-2 text-xs font-semibold uppercase tracking-[0.24em] opacity-50">
               Chương {chapter.chapterNumber}
             </p>
             {chapter.title && (
-              <h1 className="text-2xl sm:text-3xl font-bold leading-tight text-balance break-words">
+              <h1 className="break-words font-serif text-2xl font-bold leading-tight text-balance sm:text-3xl">
                 {chapter.title}
               </h1>
             )}

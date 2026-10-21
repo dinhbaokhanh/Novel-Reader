@@ -46,23 +46,24 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-primary-50 to-primary-100 dark:from-gray-900 dark:to-gray-800 px-4 py-8">
-      <div className="max-w-md w-full space-y-6 sm:space-y-8 bg-white dark:bg-gray-800 p-6 sm:p-8 rounded-xl shadow-lg">
+    <main className="surface-grid flex min-h-screen items-center justify-center bg-[#f8fafb] px-4 py-8 dark:bg-[#111b2e]">
+      <div className="w-full max-w-md space-y-6 rounded-2xl border border-slate-200 bg-white p-6 shadow-[0_24px_60px_rgba(17,27,46,0.10)] dark:border-slate-700 dark:bg-slate-900 sm:p-9 sm:space-y-8">
         <div className="text-center">
-          <div className="flex justify-center">
-            <BookOpen className="h-12 w-12 text-primary-600" />
+          <div className="mx-auto grid h-14 w-14 place-items-center rounded-2xl bg-primary-600 text-white shadow-lg shadow-primary-600/20">
+            <BookOpen className="h-7 w-7" />
           </div>
-          <h2 className="mt-4 sm:mt-6 text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white">
-            Đăng nhập
-          </h2>
-          <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">
-            Chào mừng bạn trở lại với AI Novel Writer
+          <p className="mt-5 text-xs font-semibold uppercase tracking-[0.22em] text-primary-700 dark:text-primary-300">
+            Không gian đọc
           </p>
+          <h1 className="mt-2 font-serif text-3xl font-bold tracking-tight text-slate-950 dark:text-white sm:text-4xl">
+            Đăng nhập
+          </h1>
+          <p className="mt-3 text-sm leading-6 text-slate-600 dark:text-slate-400">Tiếp tục nơi bạn đã dừng lại trong câu chuyện.</p>
         </div>
 
         <form className="mt-8 space-y-6" onSubmit={handleSubmit(onSubmit)}>
           {error && (
-            <div className="bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 p-3 rounded-lg text-sm">
+            <div role="alert" className="rounded-lg border border-red-200 bg-red-50 p-3 text-sm text-red-700 dark:border-red-900 dark:bg-red-950/40 dark:text-red-300">
               {error}
             </div>
           )}
@@ -75,7 +76,7 @@ export default function LoginPage() {
               <input
                 {...register('email')}
                 type="email"
-                className="mt-1 block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg shadow-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500 dark:bg-gray-700 dark:text-white"
+                className="mt-1 block w-full rounded-lg border border-slate-300 bg-white px-3 py-2.5 text-slate-950 shadow-sm placeholder:text-slate-400 dark:border-slate-600 dark:bg-slate-800 dark:text-white"
                 placeholder="your@email.com"
               />
               {errors.email && (
@@ -90,7 +91,7 @@ export default function LoginPage() {
               <input
                 {...register('password')}
                 type="password"
-                className="mt-1 block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg shadow-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500 dark:bg-gray-700 dark:text-white"
+                className="mt-1 block w-full rounded-lg border border-slate-300 bg-white px-3 py-2.5 text-slate-950 shadow-sm placeholder:text-slate-400 dark:border-slate-600 dark:bg-slate-800 dark:text-white"
                 placeholder="••••••••"
               />
               {errors.password && (
@@ -102,19 +103,19 @@ export default function LoginPage() {
           <button
             type="submit"
             disabled={isLoading}
-            className="w-full flex justify-center py-2 px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="w-full rounded-lg bg-primary-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-primary-700 disabled:cursor-not-allowed disabled:opacity-50"
           >
             {isLoading ? 'Đang đăng nhập...' : 'Đăng nhập'}
           </button>
 
           <div className="text-center text-sm">
-            <span className="text-gray-600 dark:text-gray-400">Chưa có tài khoản? </span>
-            <Link href="/register" className="font-medium text-primary-600 hover:text-primary-500">
+            <span className="text-slate-600 dark:text-slate-400">Chưa có tài khoản? </span>
+            <Link href="/register" className="font-semibold text-primary-700 hover:text-primary-600 dark:text-primary-300">
               Đăng ký ngay
             </Link>
           </div>
         </form>
       </div>
-    </div>
+    </main>
   );
 }

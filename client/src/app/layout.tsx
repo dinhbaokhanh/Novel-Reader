@@ -1,13 +1,15 @@
 import type { Metadata, Viewport } from 'next';
 import { Inter } from 'next/font/google';
 import './globals.css';
-import '@/lib/debug'; // Import debug utilities
 
 const inter = Inter({ subsets: ['latin', 'vietnamese'] });
 
 export const metadata: Metadata = {
-  title: 'AI Novel Writer',
-  description: 'Hệ thống đọc và sáng tác truyện với AI',
+  title: {
+    default: 'Trang sách | AI Novel Writer',
+    template: '%s | AI Novel Writer',
+  },
+  description: 'Không gian đọc và sáng tác truyện với AI.',
 };
 
 export const viewport: Viewport = {
@@ -15,8 +17,8 @@ export const viewport: Viewport = {
   initialScale: 1,
   viewportFit: 'cover', // cho phép dùng env(safe-area-inset-*) trên iPhone
   themeColor: [
-    { media: '(prefers-color-scheme: light)', color: '#ffffff' },
-    { media: '(prefers-color-scheme: dark)',  color: '#1f2937' },
+    { media: '(prefers-color-scheme: light)', color: '#f8fafb' },
+    { media: '(prefers-color-scheme: dark)',  color: '#111b2e' },
   ],
 };
 

@@ -2,7 +2,6 @@
 
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
-import rehypeRaw from 'rehype-raw';
 import { ReadingTheme } from '@/lib/types';
 
 interface MarkdownRendererProps {
@@ -85,7 +84,6 @@ export default function MarkdownRenderer({
     <div className={`max-w-none leading-relaxed break-words ${className}`} style={baseStyle}>
       <ReactMarkdown
         remarkPlugins={[remarkGfm]}
-        rehypePlugins={[rehypeRaw]}
         components={{
           // ── Headings ───────────────────────────────────────────────
           h1: ({ children }) => (

@@ -2,14 +2,53 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Reset body — để Tailwind class kiểm soát màu, không dùng CSS var */
-body {
-  background-color: transparent;
+@layer base {
+  :root {
+    color-scheme: light;
+    --ink-950: #111b2e;
+    --ink-900: #18243a;
+    --ink-700: #34415a;
+    --paper-50: #f8fafb;
+    --paper-100: #eef3f5;
+    --accent-500: #0f9f9a;
+    --accent-600: #087f7c;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    min-width: 320px;
+    background-color: var(--paper-50);
+    color: var(--ink-950);
+  }
+
+  ::selection {
+    background: #b9e7e1;
+    color: var(--ink-950);
+  }
+
+  button,
+  a,
+  input,
+  select,
+  textarea {
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  :focus-visible {
+    outline: 3px solid #62cfc7;
+    outline-offset: 2px;
+  }
 }
 
-/* Tắt highlight xanh khi chạm trên mobile, tránh trang bị kéo ngang */
+/* Keep the shell quiet so content remains the visual priority. */
+body {
+  background-color: var(--paper-50);
+}
+
 html {
-  -webkit-tap-highlight-color: transparent;
   -webkit-text-size-adjust: 100%;
 }
 
@@ -47,6 +86,12 @@ body {
   .pt-safe {
     padding-top: env(safe-area-inset-top);
   }
+
+  .surface-grid {
+    background-image: linear-gradient(to right, rgba(24, 36, 58, 0.035) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(24, 36, 58, 0.035) 1px, transparent 1px);
+    background-size: 32px 32px;
+  }
 }
 
 /* Custom scrollbar */
@@ -56,13 +101,27 @@ body {
 }
 
 ::-webkit-scrollbar-track {
-  @apply bg-gray-100 dark:bg-gray-800;
+  @apply bg-slate-100 dark:bg-slate-900;
 }
 
 ::-webkit-scrollbar-thumb {
-  @apply bg-gray-300 dark:bg-gray-600 rounded-full;
+  @apply bg-slate-300 dark:bg-slate-600 rounded-full;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  @apply bg-gray-400 dark:bg-gray-500;
+  @apply bg-slate-400 dark:bg-slate-500;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
 }

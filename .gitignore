@@ -6,6 +6,10 @@
 
 # Local agent/editor configuration
 .claude/
+.agents/
+.cursor/
+.devin/
+skills-lock.json
 
 # Dependencies
 node_modules/

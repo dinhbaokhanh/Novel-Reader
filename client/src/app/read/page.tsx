@@ -69,17 +69,16 @@ export default function ReaderHomePage() {
 
   return (
     <ProtectedLayout>
-      <div className="space-y-5 sm:space-y-8">
+      <div className="space-y-7 sm:space-y-9">
 
         <div>
-          <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white">Thư viện</h1>
-          <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
-            Chọn truyện bạn muốn đọc hôm nay
-          </p>
+          <p className="text-xs font-semibold uppercase tracking-[0.2em] text-primary-700 dark:text-primary-300">Kệ sách</p>
+          <h1 className="mt-2 font-serif text-3xl font-bold tracking-tight text-slate-950 dark:text-white sm:text-4xl">Thư viện</h1>
+          <p className="mt-2 max-w-xl text-sm leading-6 text-slate-600 dark:text-slate-400">Những câu chuyện đang chờ bạn trở lại — tiếp tục một chương cũ hoặc bắt đầu một hành trình mới.</p>
         </div>
 
         {error && (
-          <div className="bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 p-4 rounded-lg">
+          <div role="alert" className="rounded-lg border border-red-200 bg-red-50 p-4 text-red-700 dark:border-red-900 dark:bg-red-950/30 dark:text-red-300">
             {error}
           </div>
         )}
@@ -89,7 +88,7 @@ export default function ReaderHomePage() {
             <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-primary-600" />
           </div>
         ) : novels.length === 0 ? (
-          <div className="text-center py-16 sm:py-20 px-4 bg-white dark:bg-gray-800 rounded-2xl shadow">
+          <div className="rounded-2xl border border-dashed border-slate-300 bg-white px-4 py-16 text-center dark:border-slate-700 dark:bg-slate-900 sm:py-20">
             <BookOpen className="mx-auto h-14 w-14 text-gray-300 dark:text-gray-600" />
             <h3 className="mt-4 text-base font-semibold text-gray-700 dark:text-gray-300">
               Chưa có truyện nào
@@ -146,8 +145,7 @@ function NovelCard({ novel }: { novel: NovelWithProgress }) {
   };
 
   return (
-    <div className="bg-white dark:bg-gray-800 rounded-2xl shadow hover:shadow-lg
-                    transition-shadow overflow-hidden flex flex-col">
+    <div className="flex flex-col overflow-hidden rounded-2xl border border-slate-200 bg-white transition hover:-translate-y-0.5 hover:border-primary-300 hover:shadow-[0_16px_36px_rgba(17,27,46,0.10)] dark:border-slate-700 dark:bg-slate-900">
       {/* Status strip */}
       <div className={`h-1.5 w-full ${statusColor[novel.status]}`} />
 
