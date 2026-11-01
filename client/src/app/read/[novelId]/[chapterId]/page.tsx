@@ -187,12 +187,12 @@ export default function ReadPage() {
     }
   };
 
-  // ── Content inline style (font is always sans-serif) ──────────────────────
+  // Use a Vietnamese-capable serif font for long-form reading content.
   const contentStyle: React.CSSProperties = {
     fontSize:   settings.fontSize,
     lineHeight: settings.lineHeight,
     maxWidth:   settings.maxWidth,
-    fontFamily: 'Georgia, Cambria, "Times New Roman", serif',
+    fontFamily: 'var(--font-noto-serif), "Noto Serif", Georgia, Cambria, "Times New Roman", serif',
   };
 
   // ── Loading / error guards ────────────────────────────────────────────────

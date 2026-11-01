@@ -1,8 +1,9 @@
 import type { Metadata, Viewport } from 'next';
-import { Inter } from 'next/font/google';
+import { Inter, Noto_Serif } from 'next/font/google';
 import './globals.css';
 
 const inter = Inter({ subsets: ['latin', 'vietnamese'] });
+const notoSerif = Noto_Serif({ subsets: ['latin', 'vietnamese'], variable: '--font-noto-serif' });
 
 export const metadata: Metadata = {
   title: {
@@ -29,7 +30,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="vi">
-      <body className={`${inter.className} antialiased`}>{children}</body>
+      <body className={`${inter.className} ${notoSerif.variable} antialiased`}>{children}</body>
     </html>
   );
 }
